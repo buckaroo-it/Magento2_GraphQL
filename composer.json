@@ -10,8 +10,10 @@
         }
     ],
     "version": "0.1",
-    "minimum-stability": "stable",
-    "require": {},
+    "minimum-stability": "dev",
+    "require": {
+        "buckaroo/magento2": "~1.39"
+    },
     "autoload": {
         "files": [
             "registration.php"
