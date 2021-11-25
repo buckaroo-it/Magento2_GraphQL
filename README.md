@@ -5,9 +5,10 @@
 # Buckaroo Magento 2 GraphQL extension
 
 ## Installation
-```
-
-```
+  - Install the module composer by running `composer require buckaroo/module-magento2graphql`
+  - enable the module by running `php bin/magento module:enable Buckaroo_Magento2Graphql`
+  - apply database updates by running `php bin/magento setup:upgrade`\*
+  - Flush the cache by running `php bin/magento cache:flush`
 
 ## Usage
 ### General information
@@ -21,7 +22,7 @@ To use the plugin you must use:
 -
 
 ### Additional information
-For more information on Second Chance please visit:
+For more information on Buckaroo GraphQL please visit:
 https://support.buckaroo.nl/categorieen/plugins/magento-2
 
 ## Contribute

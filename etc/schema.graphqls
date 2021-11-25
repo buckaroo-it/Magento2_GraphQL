@@ -1,0 +1,10 @@
+type PaymentIssuer {
+    name: String
+    code: String
+    img: String!
+}
+
+type AvailablePaymentMethod {
+    available_issuers: [PaymentIssuer] @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\AvailableIssuersForMethod") @doc(description: "Available issuers for this payment method")
+}
+

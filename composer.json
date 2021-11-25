@@ -1,0 +1,23 @@
+{
+    "name": "buckaroo/module-magento2graphql",
+    "description": "GraphQL Support",
+    "type": "magento2-module",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Florinel Chis",
+            "email": "florinel.chis@gmail.com"
+        }
+    ],
+    "version": "0.1",
+    "minimum-stability": "stable",
+    "require": {},
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Buckaroo\\Magento2Graphql\\": ""
+        }
+    }
+}
