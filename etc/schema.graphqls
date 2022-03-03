@@ -1,10 +1,44 @@
-type PaymentIssuer {
-    name: String
-    code: String
-    img: String!
-}
-
+# Overrides
 type AvailablePaymentMethod {
-    available_issuers: [PaymentIssuer] @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\AvailableIssuersForMethod") @doc(description: "Available issuers for this payment method")
+    buckaroo_additional: BuckarooAdditionalData
+    @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\AdditionalData") 
+    @doc(description: "Additional buckaroo data for this payment method")
 }
-
+input PaymentMethodInput {
+    buckaroo_additional:[BuckarooAdditionalInput]
+}
+input BuckarooAdditionalInput {
+    key: String!
+    value: String!
+}
+# Buckaroo
+type BuckarooAdditionalData {
+    fields: [BuckarooField]
+    @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\Fields") 
+    @doc(description: "Available fields for this payment method")
+    config: [BuckarooConfigData]
+    @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\ConfigData") 
+    @doc(description: "Additional config data")
+}
+type BuckarooConfigData {
+    key: String!
+    value: String
+}
+type BuckarooField {
+    key: String  @doc(description: "Field key (input name)")
+    label: String @doc(description: "field label")
+    type: String @doc(description: "Field type")
+    values: [BuckarooMultipleValues]  @doc(description: "Field values")
+    value: String  @doc(description: "Field values")
+    description: String  @doc(description: "Field description")
+    attributes: [BuckarooFieldAttributes]
+}
+type BuckarooMultipleValues {
+    name: String!
+    code: String!
+    img: String
+}
+type BuckarooFieldAttributes {
+    name: String!
+    value: String!
+}
