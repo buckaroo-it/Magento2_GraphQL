@@ -7,16 +7,13 @@ use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 
 /**
- * 
- * methods that end up here were already validated (via ::isAvailable)
- * we can use the model to retrive additional data
+ * Order output class
  */
-class ConfigData implements ResolverInterface
+class OrderOutput implements ResolverInterface
 {
-
 
     public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
-        return $value['config'];
+        return $value;
     }
 }

@@ -32,7 +32,7 @@ class Creditcards extends AbstractConfig
         return [
             [
                 "key"=>"creditcards",
-                "value" => $this->getConfigValue('creditcards')
+                "values" => $this->getConfigValue('creditcards')
             ],
             [
                 "key"=>"defaultCardImage",

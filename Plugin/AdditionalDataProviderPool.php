@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  *
@@ -48,4 +49,3 @@ class AdditionalDataProviderPool
         return strpos($methodCode, 'buckaroo_magento2') !== false;
     }
 }
-

@@ -30,19 +30,12 @@ class AdditionalData implements ResolverInterface
     public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
 
-        $response = [
-            "fields" => [],
-            "config" => []
-        ];
         $configClass = $this->getConfigClass($value['code']);
 
         if ($configClass !== null) {
-            $response = [
-                "fields" => $configClass->getFields(),
-                "config" => $configClass->getConfig()
-            ];
+            return $configClass->getConfig();
         }
-        return $response;
+        return [];
     }
     /**
      * Get config class for method

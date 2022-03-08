@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  *
@@ -22,29 +23,22 @@ namespace Buckaroo\Magento2Graphql\Model\Payment\Method\Config;
 
 use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
 
-class Emandate extends AbstractConfig
+class Mrcash extends AbstractConfig
 {
     /**
-     * @inheritDoc 
-    */
-    public function getFields()
+     * @inheritDoc
+     */
+    public function getConfig()
     {
         return [
             [
-                "key"   => "available_issuers",
-                "label" => __("Select a bank:"),
-                "type"  => "radio_list",
-                "values" => $this->getAvailableIssuers(),
+                "key" => "useClientSide",
+                "value" => $this->getConfigValue('useClientSide')
             ]
         ];
     }
-    /**
-     * Get list of available issuers
-     *
-     * @return array
-     */
-    protected function getAvailableIssuers()
+    protected function getConfigValue($key)
     {
-        return $this->configProvider->getConfig()['payment']['buckaroo']['emandate']['banks'];
+        return $this->configProvider->getConfig()['payment']['buckaroo']['mrcash'][$key];
     }
 }

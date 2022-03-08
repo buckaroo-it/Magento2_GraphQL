@@ -25,104 +25,6 @@ use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
 class Billink extends AbstractConfig
 {
     /**
-     * @inheritDoc 
-    */
-    public function getFields()
-    {
-        return [
-            [
-                "key"   => "customer_gender",
-                "label" => __("Saluation"),
-                "type"  => "checkbox_list",
-                "values"=> [
-                   [
-                    "name" => __("Mr."),
-                    "code" => "1"
-                   ],
-                   [
-                    "name" => __("Mrs."),
-                    "code" => "2"
-                   ]
-
-                ],
-                "attributes"=> [
-                    [
-                        "name" => "required",
-                        "value" => true
-                    ]
-                ]
-            ],
-            [
-                "key"   => "customer_billingName",
-                "label" => __("Billing Name:"),
-                "type"  => "text",
-                "attributes"=> [
-                    [
-                        "name" => "required",
-                        "value" => true
-                    ]
-                ]
-            ],
-            [
-                "key"   => "customer_telephone",
-                "label" => __("Telephone:"),
-                "type"  => "text",
-                "attributes"=> [
-                    [
-                        "name" => "required",
-                        "value" => true
-                    ]
-                ]
-            ],
-            [
-                "key"   => "customer_DoB",
-                "label" => __("Date of Birth:"),
-                "type"  => "date",
-                "attributes"=> [
-                    [
-                        "name" => "required",
-                        "value" => true
-                    ]
-                ]
-            ],
-            [
-                "key"   => "buckaroo_chamberOfCommerce",
-                "label" => __("Chamber of Commerce number:"),
-                "type"  => "text",
-                "attributes"=> [
-                    [
-                        "name" => "required",
-                        "value" => true
-                    ]
-                ]
-            ],
-            [
-                "key"   => "buckaroo_VATNumber",
-                "label" => __("VAT number:"),
-                "type"  => "text",
-            ],
-            [
-                "key"   => "termsCondition",
-                "label" => __("Terms and Conditions:"),
-                "type"  => "checkbox",
-                "attributes"=> [
-                    [
-                        "name" => "required",
-                        "value" => true
-                    ],
-                    [
-                        "name" => "data-accept-url",
-                        "value" => "https://www.billink.nl/app/uploads/2021/05/Gebruikersvoorwaarden-Billink_V11052021.pdf"
-                    ],
-                    [
-                        "name" => "data-accept-text",
-                        "value" => __("Accept terms of use")
-                    ]
-                ]
-            ]
-        ];
-    }
-    /**
      * @inheritDoc
      */
     public function getConfig()
@@ -130,7 +32,7 @@ class Billink extends AbstractConfig
         return [
             [
                 "key"=>"b2b",
-                "value" => $this->configProvider->getConfig()['payment']['buckaroo']['billink']['b2b']
+                "value" => (int)$this->configProvider->getConfig()['payment']['buckaroo']['billink']['b2b']
             ],
         ];
     }

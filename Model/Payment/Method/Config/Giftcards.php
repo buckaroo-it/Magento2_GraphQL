@@ -22,25 +22,38 @@ namespace Buckaroo\Magento2Graphql\Model\Payment\Method\Config;
 
 use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
 
-class SepaDirectDebit extends AbstractConfig
+class Giftcards extends AbstractConfig
 {
     /**
-     * @inheritDoc 
-    */
-    public function getFields()
+     * @inheritDoc
+     */
+    public function getConfig()
     {
         return [
             [
-                "key"   => "customer_account_name",
-                "label" => __("Bank account holder"),
-                "type"  => "text",
+                "key"=>"groupGiftcards",
+                "value" => $this->getConfigValue('groupGiftcards')
             ],
             [
-                "key"   => "customer_iban",
-                "label" => __("Bank account number"),
-                "type"  => "text",
-                "description" => __("Please enter these fields as they appear on your bank account.")
-            ]
+                "key"=>"availableGiftcards",
+                "values" => $this->getAvailableGiftcards()
+            ],
+            
         ];
+    }
+    protected function getConfigValue($key)
+    {
+       return $this->configProvider->getConfig()['payment']['buckaroo'][$key];
+    }
+    public function getAvailableGiftcards()
+    {
+        return array_map(
+            function($giftcard) {
+                $giftcard['name'] = $giftcard['title'];
+                $giftcard['img'] = $giftcard['logo'] != false ? $giftcard['logo'] : null;
+                return $giftcard;
+            },
+            $this->getConfigValue('avaibleGiftcards')
+        );
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  *
@@ -25,42 +26,23 @@ use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
 class Ideal extends AbstractConfig
 {
     /**
-     * @inheritDoc 
-    */
-    public function getFields()
-    {
-        return [
-            [
-                "key"   => "issuer",
-                "label" => __("Select a bank:"),
-                "type"  => "radio_list",
-                "values" => $this->getAvailableIssuers(),
-            ]
-        ];
-    }
-    /**
      * @inheritDoc
      */
     public function getConfig()
     {
         return [
             [
-                "key"=>"selectionType",
+                "key" => "selectionType",
                 "value" => $this->getConfigValue('selectionType')
             ],
+            [
+                "key" => "banks",
+                "values" => $this->getConfigValue('banks')
+            ]
         ];
-    }
-    /**
-     * Get list of available issuers
-     *
-     * @return array
-     */
-    protected function getAvailableIssuers()
-    {
-        return $this-> getConfigValue('banks');
     }
     protected function getConfigValue($key)
     {
-       return $this->configProvider->getConfig()['payment']['buckaroo']['ideal'][$key];
+        return $this->configProvider->getConfig()['payment']['buckaroo']['ideal'][$key];
     }
 }

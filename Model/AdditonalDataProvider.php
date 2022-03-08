@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  *
@@ -20,8 +21,6 @@
 
 namespace Buckaroo\Magento2Graphql\Model;
 
-use Magento\Framework\Phrase;
-use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Buckaroo\Magento2Graphql\Plugin\AdditionalDataProviderPool;
 use Buckaroo\Magento2Graphql\Model\Payment\Method\ConfigFactory;
 use Magento\QuoteGraphQl\Model\Cart\Payment\AdditionalDataProviderInterface;
@@ -46,48 +45,14 @@ class AdditonalDataProvider implements AdditionalDataProviderInterface
      */
     public function getData(array $args): array
     {
-        $fieldKeys = $this->getFieldKeys($args);
-        $additionalArgs = [];
-        if(
-            isset($args[AdditionalDataProviderPool::PROVIDER_KEY]) &&
-            count($args[AdditionalDataProviderPool::PROVIDER_KEY])
-        ) {
-            foreach($args[AdditionalDataProviderPool::PROVIDER_KEY] as $argArray) {
-                //filter any unkown fields
-                if(in_array($argArray['key'], $fieldKeys)) {
-                    $additionalArgs[$argArray['key']] = $argArray['value'];
-                }
-            }
-        }
-        unset($args[AdditionalDataProviderPool::PROVIDER_KEY]);
-        return array_merge($args, $additionalArgs);
-    }
-    /**
-     * Get field keys
-     *
-     * @param string $methodCode
-     *
-     * @return array
-     * @throws GraphQlInputException
-     */
-    protected function getFieldKeys($args)
-    {
-        if (!isset($args['code'])) {
-            return [];
+        if (isset($args[AdditionalDataProviderPool::PROVIDER_KEY][$args['code']])) {
+
+            $additionalArgs = $args[AdditionalDataProviderPool::PROVIDER_KEY][$args['code']];
+            unset($args[AdditionalDataProviderPool::PROVIDER_KEY][$args['code']]);
+
+            return array_merge($args, $additionalArgs);
         }
 
-        $methodCode = $args['code'];
-        try {
-            $methodConfig = $this->fieldListFactory->create($methodCode);
-            if ($methodConfig !== null) {
-                return $methodConfig->getFieldKeys();
-            }
-        } catch (\Throwable $th) {
-            throw new GraphQlInputException(
-                new Phrase('Failed to retrieve buckaroo field keys for '.$methodCode),
-                $th
-            );
-        }
-        return [];
+        return $args;
     }
 }

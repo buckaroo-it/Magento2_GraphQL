@@ -34,15 +34,6 @@ abstract class AbstractConfig
         $this->configProvider = $configProvider;
     }
     /**
-     * Get payment method custom fields
-     *
-     * @return array
-     */
-    public function getFields()
-    {
-        return [];
-    }
-    /**
      * Get payment method configuration
      *
      * @return array
@@ -50,19 +41,5 @@ abstract class AbstractConfig
     public function getConfig()
     {
         return [];
-    }
-    /**
-     * Get all field keys
-     *
-     * @return void
-     */
-    public function getFieldKeys()
-    {
-        return array_map(
-            function($field) {
-                return $field['key'] ?? '';
-            },
-            $this->getFields()
-        );
     }
 }
