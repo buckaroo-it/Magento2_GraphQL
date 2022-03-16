@@ -8,3 +8,33 @@ type AvailablePaymentMethod {
     available_issuers: [PaymentIssuer] @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\AvailableIssuersForMethod") @doc(description: "Available issuers for this payment method")
 }
 
+type Customer {
+    idin: BuckarooIdin @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\IdinResolver")
+}
+
+type Query {
+    getBuckarooIdin: BuckarooIdin @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\IdinResolver")
+}
+
+type BuckarooIdin {
+    issuers: [BuckarooIdinIssuers]!
+    active: Boolean!
+    verified: Boolean!
+
+}
+type BuckarooIdinIssuers {
+    name: String!
+    code: String
+}
+
+type Mutation {
+    verifiyBuckarooIdin (input: BuckarooIdinInput!): BuckarooIdinOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\IdinOutputResolver") 
+}
+
+input BuckarooIdinInput {
+    issuer: String!
+}
+
+type BuckarooIdinOutput {
+    redirect: String!
+}
