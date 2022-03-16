@@ -8,33 +8,31 @@ type AvailablePaymentMethod {
     available_issuers: [PaymentIssuer] @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\AvailableIssuersForMethod") @doc(description: "Available issuers for this payment method")
 }
 
-type Customer {
-    idin: BuckarooIdin @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\IdinResolver")
-}
-
 type Query {
-    getBuckarooIdin: BuckarooIdin @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\IdinResolver")
+    getBuckarooIdin (cartId: String!): BuckarooIdin @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\IdinResolver")
+    @doc(description: "Get iDIN info for this session")
 }
 
 type BuckarooIdin {
-    issuers: [BuckarooIdinIssuers]!
-    active: Boolean!
-    verified: Boolean!
+    issuers: [BuckarooIdinIssuers]! @doc(description: "List of issuers available for iDIN verification")
+    active: Boolean! @doc(description: "iDIN is active or not")
+    verified: Boolean! @doc(description: "Age is verified for this customer/session")
 
 }
 type BuckarooIdinIssuers {
-    name: String!
-    code: String
+    name: String! @doc(description: "Issuer name")
+    code: String! @doc(description: "Issuer code required for age verification")
 }
 
 type Mutation {
-    verifiyBuckarooIdin (input: BuckarooIdinInput!): BuckarooIdinOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\IdinOutputResolver") 
+    verifyBuckarooIdin (input: BuckarooIdinInput!): BuckarooIdinOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\IdinOutputResolver") 
+    @doc(description: "Verify customer/session age")
 }
 
 input BuckarooIdinInput {
-    issuer: String!
+    issuer: String! @doc(description: "Issuer code required for age verification")
 }
 
 type BuckarooIdinOutput {
-    redirect: String!
+    redirect: String! @doc(description: "Url required for completion of age verification")
 }

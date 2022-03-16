@@ -47,7 +47,6 @@ class IdinOutputResolver implements ResolverInterface
      */
     private $logger;
 
-
     /**
      *
      * @param \Buckaroo\Magento2\Gateway\Http\TransactionBuilderFactory $transactionBuilderFactory
@@ -76,7 +75,7 @@ class IdinOutputResolver implements ResolverInterface
         } catch (\Throwable $th) {
             $this->logger->debug($th->getMessage());
             throw new GraphQlInputException(
-                new Phrase('Unkown buckaroo error occurred')
+                new Phrase('Unknown buckaroo error occurred')
             );
         }
 

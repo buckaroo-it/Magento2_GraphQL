@@ -21,23 +21,100 @@
 
 namespace Buckaroo\Magento2Graphql\Resolver;
 
-use Magento\Framework\GraphQl\Query\ResolverInterface;
-use Magento\Framework\GraphQl\Config\Element\Field;
-use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-
+use Magento\Framework\Phrase;
+use Buckaroo\Magento2\Logging\Log;
 use Buckaroo\Magento2\Model\ConfigProvider\Idin;
+
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\GraphQl\Config\Element\Field;
+use Magento\QuoteGraphQl\Model\Cart\GetCartForUser;
+use Magento\Framework\GraphQl\Query\ResolverInterface;
+use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use Magento\Customer\Model\ResourceModel\CustomerRepository;
+use Magento\Framework\GraphQl\Exception\GraphQlInputException;
+use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 
 class IdinResolver implements ResolverInterface
 {
-    private $idinConfig;
+    /**
+     * @var Idin
+     */
+    protected $idinConfig;
 
-    public function __construct(Idin $idinConfig)
-    {
+    /**
+     * @var GetCartForUser
+     */
+    protected $getCartForUser;
+
+    /**
+     * @var CustomerRepository
+     */
+    protected $customerRepository;
+
+    /**
+     * @var Log
+     */
+    private $logger;
+
+    public function __construct(
+        Idin $idinConfig,
+        GetCartForUser $getCartForUser,
+        CustomerRepository $customerRepository,
+        Log $logger
+    ) {
         $this->idinConfig = $idinConfig;
+        $this->getCartForUser = $getCartForUser;
+        $this->customerRepository = $customerRepository;
+        $this->logger = $logger;
     }
 
     public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
-        return $this->idinConfig->getConfig()['buckarooIdin'];
+        if (empty($args['cartId'])) {
+            throw new GraphQlInputException(
+                new Phrase('Required parameter "cartId" is missing')
+            );
+        }
+        try {
+            $idin = $this->idinConfig->getIdinStatus(
+                $this->getQuote($args['cartId'], $context),
+                $this->getCustomer($context->getUserId())
+            );
+        } catch (LocalizedException $e) {
+            throw $e;
+        } catch (\Throwable $th) {
+            $this->logger->debug($th->getMessage());
+            throw new GraphQlInputException(
+                new Phrase('Unknown buckaroo error occurred')
+            );
+        }
+        return [
+            'issuers' => $this->idinConfig->getIssuers(),
+            'active' => $idin['active'],
+            'verified' => $idin['verified']
+        ];
+    }
+    protected function getQuote(string $maskedQuoteId, ContextInterface $context)
+    {
+        // Shopping Cart validation
+        return $this->getCartForUser->execute(
+            $maskedQuoteId,
+            $context->getUserId(), 
+            (int)$context->getExtensionAttributes()->getStore()->getId()
+        );
+    }
+    /**
+     * Get customer by id
+     *
+     * @param mixed $customerId
+     *
+     * @return CustomerInterface|null
+     */
+    public function getCustomer($customerId)
+    {
+        if(empty($customerId)) {
+            return;
+        }
+        return $this->customerRepository->getById($customerId);
     }
 }
