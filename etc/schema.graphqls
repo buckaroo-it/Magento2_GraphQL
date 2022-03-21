@@ -147,7 +147,12 @@ input BuckarooTinkaInput {
 #Order output
 type BuckarooOrderOutput {
     redirect: String
-    @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\Redirect")
+    data: [BuckarooAdditionalOutputData]
+}
+
+type BuckarooAdditionalOutputData {
+    key: String!
+    value: String!
 }
 
 #Method additional data

@@ -23,7 +23,7 @@ namespace Buckaroo\Magento2Graphql\Model\Payment\Method\Config;
 
 use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
 
-class Mrcash extends AbstractConfig
+class Payconiq extends AbstractConfig
 {
     /**
      * @inheritDoc
@@ -32,10 +32,6 @@ class Mrcash extends AbstractConfig
     {
         return [
             [
-                "key" => "useClientSide",
-                "value" => $this->getConfigValue('useClientSide')
-            ],
-            [
                 "key" => "redirecturl",
                 "value" => $this->getConfigValue('redirecturl')
             ]
@@ -43,6 +39,6 @@ class Mrcash extends AbstractConfig
     }
     protected function getConfigValue($key)
     {
-        return $this->configProvider->getConfig()['payment']['buckaroo']['mrcash'][$key];
+        return $this->configProvider->getConfig()['payment']['buckaroo']['payconiq'][$key];
     }
 }

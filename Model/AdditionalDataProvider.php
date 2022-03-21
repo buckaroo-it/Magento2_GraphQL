@@ -25,8 +25,9 @@ use Buckaroo\Magento2Graphql\Plugin\AdditionalDataProviderPool;
 use Buckaroo\Magento2Graphql\Model\Payment\Method\ConfigFactory;
 use Magento\QuoteGraphQl\Model\Cart\Payment\AdditionalDataProviderInterface;
 
-class AdditonalDataProvider implements AdditionalDataProviderInterface
+class AdditionalDataProvider implements AdditionalDataProviderInterface
 {
+    const PAYMENT_FROM = 'buckaroo_payment_from';
     /**
      *
      * @var Buckaroo\Magento2Graphql\Model\Payment\Method\ConfigFactory
@@ -38,21 +39,24 @@ class AdditonalDataProvider implements AdditionalDataProviderInterface
         $this->fieldListFactory = $fieldListFactory;
     }
     /**
-     * Return Additional Data
+     * Return Additional Data,
+     * set a flag so we know the payment originated from graphql
      *
      * @param array $args
      * @return array
      */
     public function getData(array $args): array
     {
+        $args[self::PAYMENT_FROM] = 'graphQl';
+
         if (isset($args[AdditionalDataProviderPool::PROVIDER_KEY][$args['code']])) {
 
             $additionalArgs = $args[AdditionalDataProviderPool::PROVIDER_KEY][$args['code']];
-            unset($args[AdditionalDataProviderPool::PROVIDER_KEY][$args['code']]);
+            unset($args[AdditionalDataProviderPool::PROVIDER_KEY]);
 
             return array_merge($args, $additionalArgs);
         }
-
+        
         return $args;
     }
 }

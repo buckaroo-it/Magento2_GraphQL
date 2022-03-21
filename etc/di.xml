@@ -39,4 +39,7 @@
     <type name="Magento\QuoteGraphQl\Model\Cart\Payment\AdditionalDataProviderPool">
         <plugin name="buckaroo_graphql_data_provider_pool" type="Buckaroo\Magento2Graphql\Plugin\AdditionalDataProviderPool" />
     </type>
+    <type name="Buckaroo\Magento2\Controller\Redirect\Process">
+        <plugin name="buckaroo_graphql_redirect_process" type="Buckaroo\Magento2Graphql\Plugin\Redirect\Process" sortOrder="1"/>
+    </type>
 </config>

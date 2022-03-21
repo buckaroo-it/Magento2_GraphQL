@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  *
@@ -37,7 +38,8 @@ class ConfigFactory
      */
     protected $configProviders;
 
-    public function __construct(array $configProviders, Factory $configProviderMethodFactory) {
+    public function __construct(array $configProviders, Factory $configProviderMethodFactory)
+    {
         $this->configProviderMethodFactory = $configProviderMethodFactory;
         $this->configProviders = $configProviders;
     }
