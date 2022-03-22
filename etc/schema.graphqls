@@ -1,10 +1,168 @@
-type PaymentIssuer {
-    name: String
-    code: String
-    img: String!
-}
-
+# Overrides
 type AvailablePaymentMethod {
-    available_issuers: [PaymentIssuer] @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\AvailableIssuersForMethod") @doc(description: "Available issuers for this payment method")
+    buckaroo_additional: [BuckarooAdditionalData]
+    @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\AdditionalData") 
+    @doc(description: "Additional buckaroo data for this payment method")
+}
+input PaymentMethodInput {
+     buckaroo_additional: BuckarooAdditionalInput
 }
 
+type Order {
+    buckaroo_additional: BuckarooOrderOutput 
+    @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\OrderOutput")
+}
+
+# Buckaroo
+#Payment input
+
+#Global
+
+input BuckarooAdditionalInput {
+    buckaroo_magento2_afterpay: BuckarooAfterpay
+    buckaroo_magento2_afterpay2: BuckarooAfterpay
+    buckaroo_magento2_afterpay20: BuckarooAfterpay
+    buckaroo_magento2_applepay: BuckarooApplepayInput
+    buckaroo_magento2_billink: BuckarooBillinkInput
+    buckaroo_magento2_capayablein3: BuckarooIn3B2BInput
+    buckaroo_magento2_creditcard: BuckarooCreditcardInput
+    buckaroo_magento2_creditcards: BuckarooCreditcardsInput
+    buckaroo_magento2_emandate: BuckarooEmandateInput
+    buckaroo_magento2_giftcards: BuckarooGiftcardsInput
+    buckaroo_magento2_giropay: BuckarooGiropayInput
+    buckaroo_magento2_ideal: BuckarooIdealInput
+    buckaroo_magento2_idealprocessing: BuckarooIdealInput
+    buckaroo_magento2_mrcash: BuckarooMrcashInput
+    buckaroo_magento2_paylink: BuckarooPayLinkInput
+    buckaroo_magento2_payperemail: BuckarooPayPerEmailInput
+    buckaroo_magento2_sepadirectdebit: BuckarooSepaDirectDebitInput
+    buckaroo_magento2_tinka: BuckarooTinkaInput
+}
+
+
+
+input BuckarooAfterpay {
+    termsCondition: String!
+    customer_gender: Int! 
+    customer_billingName: String!
+    customer_iban: String!
+    selectedBusiness: String!
+    customer_DoB: String!
+    customer_telephone: String
+    customer_identificationNumber: String
+    COCNumber: String
+    CompanyName: String
+}
+
+
+#Applepay
+input BuckarooApplepayInput {
+    applepayTransaction: String
+    billingContact: String
+}
+
+#Billink
+input BuckarooBillinkInput {
+    customer_billingName: String!
+    customer_gender: Int!
+    customer_chamberOfCommerce: String!
+    customer_VATNumber: String!
+    customer_DoB: String!
+    customer_telephone: String
+}
+
+
+input BuckarooIn3B2BInput {
+    customer_gender: Int!
+    customer_DoB: String!
+    customer_orderAs: String!
+    customer_cocnumber: String
+    customer_companyName: String
+}
+
+#Creditcard
+input BuckarooCreditcardInput {
+    card_type: String
+}
+
+#Creditcards
+input BuckarooCreditcardsInput {
+    customer_encrypteddata: String!
+    customer_creditcardcompany: String
+}
+
+#Emandate
+input BuckarooEmandateInput {
+    issuer: String!
+}
+
+#Giftcards
+input BuckarooGiftcardsInput {
+    giftcard_method: String!
+}
+#Giropay
+input BuckarooGiropayInput {
+    customer_bic: String!
+}
+#Ideal
+input BuckarooIdealInput {
+    issuer: String!
+}
+#Mrcash
+input BuckarooMrcashInput {
+    client_side_mode: String!
+    customer_encrypteddata: String
+}
+
+#PayLink
+input BuckarooPayLinkInput {
+    customer_gender: Int!
+    customer_billingFirstName: String!
+    customer_billingLastName: String!
+    customer_email: String!
+}
+
+#PayPerEmail
+input BuckarooPayPerEmailInput {
+    customer_gender: Int!
+    customer_billingFirstName: String!
+    customer_billingLastName: String!
+    customer_email: String!
+}
+
+#SepaDirectDebit
+input BuckarooSepaDirectDebitInput {
+    customer_bic: String
+    customer_iban: String!
+    customer_account_name: String!
+}
+
+#Tinka
+input BuckarooTinkaInput {
+    customer_billingName: String!
+    customer_gender: Int!
+    customer_DoB: String!
+}
+
+#Order output
+type BuckarooOrderOutput {
+    redirect: String
+    data: [BuckarooAdditionalOutputData]
+}
+
+type BuckarooAdditionalOutputData {
+    key: String!
+    value: String!
+}
+
+#Method additional data
+type BuckarooAdditionalData {
+    key: String!
+    values: [BuckarooMultipleValues]  @doc(description: "Field values")
+    value: String  @doc(description: "Field values")
+}
+type BuckarooMultipleValues {
+    name: String!
+    code: String!
+    img: String
+}
