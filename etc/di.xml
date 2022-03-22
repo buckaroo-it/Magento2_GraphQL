@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the MIT License
+ * It is available through the world-wide-web at this URL:
+ * https://tldrlegal.com/license/mit-license
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to support@buckaroo.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact support@buckaroo.nl for more information.
+ *
+ * @copyright Copyright (c) Buckaroo B.V.
+ * @license   https://tldrlegal.com/license/mit-license
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Buckaroo\Magento2Graphql\Model\Payment\Method\ConfigFactory">
+        <arguments>
+            <argument name="configProviders" xsi:type="array">
+                <item name="buckaroo_magento2_afterpay" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Afterpay</item>
+                <item name="buckaroo_magento2_afterpay2" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Afterpay2</item>
+                <item name="buckaroo_magento2_applepay" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Applepay</item>
+                <item name="buckaroo_magento2_billink" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Billink</item>
+                <item name="buckaroo_magento2_creditcard" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Creditcard</item>
+                <item name="buckaroo_magento2_creditcards" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Creditcards</item>
+                <item name="buckaroo_magento2_giftcards" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Giftcards</item>
+                <item name="buckaroo_magento2_ideal" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Ideal</item>
+                <item name="buckaroo_magento2_idealprocessing" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\IdealProcessing</item>
+                <item name="buckaroo_magento2_mrcash" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Mrcash</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\QuoteGraphQl\Model\Cart\Payment\AdditionalDataProviderPool">
+        <plugin name="buckaroo_graphql_data_provider_pool" type="Buckaroo\Magento2Graphql\Plugin\AdditionalDataProviderPool" />
+    </type>
+    <type name="Buckaroo\Magento2\Controller\Redirect\Process">
+        <plugin name="buckaroo_graphql_redirect_process" type="Buckaroo\Magento2Graphql\Plugin\Redirect\Process" sortOrder="1"/>
+    </type>
+</config>
