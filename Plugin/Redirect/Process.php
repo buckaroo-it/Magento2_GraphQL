@@ -87,9 +87,6 @@ class Process
             "messages" => $messages
         ];
 
-        $this->logger->debug(__METHOD__ . $this->config->getBaseUrl());
-        $this->logger->debug(__METHOD__ . $this->config->getPaymentProcessedPath());
-
         return $this->resultRedirectFactory
             ->setUrl(
                 $this->config->getBaseUrl() . "/" . $this->config->getPaymentProcessedPath() . '?' . http_build_query($data)
