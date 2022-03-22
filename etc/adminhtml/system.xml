@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the MIT License
+ * It is available through the world-wide-web at this URL:
+ * https://tldrlegal.com/license/mit-license
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to support@buckaroo.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact support@buckaroo.nl for more information.
+ *
+ * @copyright Copyright (c) Buckaroo B.V.
+ * @license   https://tldrlegal.com/license/mit-license
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+      <section id="buckaroo_magento2" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+        <group id="graphql" translate="label comment" type="text" sortOrder="600" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>GraphQL</label>
+            
+            <field id="enable_graphql" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>GraphQL enabled</label>
+                <comment><![CDATA[Enables or disables GraphQL mode]]></comment>
+                <tooltip>Set to 'Yes' will enable GraphQL mode.</tooltip>
+                <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                <config_path>buckaroo_magento2/graphql/enable_graphql</config_path>
+            </field>
+
+            <field id="base_url" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Base URL</label>
+                <comment><![CDATA[Enter base url of your frontend.]]></comment>
+                <config_path>buckaroo_magento2/graphql/base_url</config_path>
+                <depends>
+                    <field id="enable_graphql">1</field>
+                </depends>
+            </field>
+
+            <field id="payment_processed_redirect" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Payment processed url</label>
+                <comment><![CDATA[Redirect url after payment was processed.]]></comment>
+                <config_path>buckaroo_magento2/graphql/payment_processed_redirect</config_path>
+                <depends>
+                    <field id="enable_graphql">1</field>
+                </depends>
+            </field>
+        </group>
+    </section>
+  </system>
+</config>
