@@ -21,7 +21,6 @@
 
 namespace Buckaroo\Magento2Graphql\Resolver;
 
-use Magento\Framework\Phrase;
 use Buckaroo\Magento2\Logging\Log;
 use Buckaroo\Magento2\Model\ConfigProvider\Idin;
 
@@ -72,7 +71,7 @@ class IdinResolver implements ResolverInterface
     {
         if (empty($args['cartId'])) {
             throw new GraphQlInputException(
-                new Phrase('Required parameter "cartId" is missing')
+               __('Required parameter "cartId" is missing')
             );
         }
         try {
@@ -85,7 +84,7 @@ class IdinResolver implements ResolverInterface
         } catch (\Throwable $th) {
             $this->logger->debug($th->getMessage());
             throw new GraphQlInputException(
-                new Phrase('Unknown buckaroo error occurred')
+               __('Unknown buckaroo error occurred')
             );
         }
         return [

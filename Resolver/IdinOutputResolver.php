@@ -21,7 +21,6 @@
 
 namespace Buckaroo\Magento2Graphql\Resolver;
 
-use Magento\Framework\Phrase;
 use Buckaroo\Magento2\Logging\Log;
 use Buckaroo\Magento2\Gateway\GatewayInterface;
 use Magento\Framework\GraphQl\Config\Element\Field;
@@ -67,7 +66,7 @@ class IdinOutputResolver implements ResolverInterface
     {
         if (!(isset($args['input']) && isset($args['input']['issuer']))) {
             throw new GraphQlInputException(
-                new Phrase('A idin issuer is required')
+                __('A idin issuer is required')
             );
         }
         try {
@@ -75,7 +74,7 @@ class IdinOutputResolver implements ResolverInterface
         } catch (\Throwable $th) {
             $this->logger->debug($th->getMessage());
             throw new GraphQlInputException(
-                new Phrase('Unknown buckaroo error occurred')
+                __('Unknown buckaroo error occurred')
             );
         }
 
@@ -83,7 +82,7 @@ class IdinOutputResolver implements ResolverInterface
             return ['redirect' => $response->RequiredAction->RedirectURL];
         } else {
             throw new GraphQlInputException(
-                new Phrase('Unfortunately iDIN not verified!')
+                __('Unfortunately iDIN not verified!')
             );
         }
     }
