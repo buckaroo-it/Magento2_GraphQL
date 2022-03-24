@@ -54,6 +54,34 @@ input BuckarooAfterpay {
     CompanyName: String
 }
 
+type Query {
+    getBuckarooIdin (cartId: String!): BuckarooIdin @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\IdinResolver")
+    @doc(description: "Get iDIN info for this session")
+}
+
+type BuckarooIdin {
+    issuers: [BuckarooIdinIssuers]! @doc(description: "List of issuers available for iDIN verification")
+    active: Boolean! @doc(description: "iDIN is active or not")
+    verified: Boolean! @doc(description: "Age is verified for this customer/session")
+
+}
+type BuckarooIdinIssuers {
+    name: String! @doc(description: "Issuer name")
+    code: String! @doc(description: "Issuer code required for age verification")
+}
+
+type Mutation {
+    verifyBuckarooIdin (input: BuckarooIdinInput!): BuckarooIdinOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\IdinOutputResolver") 
+    @doc(description: "Verify customer/session age")
+}
+
+input BuckarooIdinInput {
+    issuer: String! @doc(description: "Issuer code required for age verification")
+}
+
+type BuckarooIdinOutput {
+    redirect: String! @doc(description: "Url required for completion of age verification")
+}
 
 #Applepay
 input BuckarooApplepayInput {
