@@ -34,10 +34,6 @@ class Mrcash extends AbstractConfig
             [
                 "key" => "useClientSide",
                 "value" => $this->getConfigValue('useClientSide')
-            ],
-            [
-                "key" => "redirecturl",
-                "value" => $this->getConfigValue('redirecturl')
             ]
         ];
     }
