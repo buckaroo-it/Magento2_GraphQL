@@ -47,6 +47,11 @@ class Process
      */
     protected $logger;
 
+    /**
+     * @var array
+     */
+    protected $message = [];
+
     public function __construct(
         Redirect $resultRedirectFactory,
         MainConfig $config,
@@ -56,17 +61,22 @@ class Process
         $this->config = $config;
         $this->logger = $logger;
     }
+    /**
+     * Override redirect process
+     *
+     * @param ProcessInterface $process
+     * @param callable $proceed
+     * @param string $path
+     * @param array $arguments
+     *
+     * @return mixed
+     */
     public function aroundHandleProcessedResponse(ProcessInterface $process, callable $proceed, $path, $arguments = [])
     {
 
         try {
             if ($this->isFromGraphQl($process->getOrder())) {
-                return $this->redirectWithData(
-                    $path,
-                    $this->formatMessages(
-                        $process->getMessages(true)
-                    )
-                );
+                return $this->redirectWithData($path);
             }
         } catch (\Throwable $th) {
             $this->logger->debug(__METHOD__ . $th->getMessage());
@@ -74,18 +84,73 @@ class Process
         return $proceed($path, $arguments);
     }
     /**
+     * Override add error message to user
+     *
+     * @param ProcessInterface $process
+     * @param callable $proceed
+     * @param string $message
+     *
+     * @return void
+     */
+    public function aroundAddErrorMessage(ProcessInterface $process, callable $proceed, string $message)
+    {
+        $this->setMessage($message, MessageInterface::TYPE_ERROR);
+        if (!$this->isFromGraphQl($process->getOrder())) {
+            $proceed($message);
+        }
+    }
+
+    /**
+     * Override add success message to user
+     *
+     * @param ProcessInterface $process
+     * @param callable $proceed
+     * @param string $message
+     *
+     * @return void
+     */
+    public function aroundAddSuccessMessage(ProcessInterface $process, callable $proceed, string $message)
+    {
+        $this->setMessage($message, MessageInterface::TYPE_SUCCESS);
+        if (!$this->isFromGraphQl($process->getOrder())) {
+            $proceed($message);
+        }
+    }
+    /**
+     * Store message text & type
+     *
+     * @param string $message
+     * @param string $type
+     *
+     * @return void
+     */
+    protected function setMessage(string $message, string $type)
+    {
+        $this->message = [
+            "type" => $type,
+            "text" => $message
+        ];
+    }
+
+    /**
      * Redirect to spa/pwa with data
      *
      * @param string $path
      *
      * @return Magento\Framework\App\Response\RedirectInterface
      */
-    protected function redirectWithData(string $path, $messages)
+    protected function redirectWithData(string $path)
     {
         $data = [
             "route" => $path,
-            "messages" => $messages
         ];
+
+        if (isset($this->message['type']) && isset($this->message['text'])) {
+            $data = array_merge($data, [
+                "messageType" => $this->message['type'],
+                "message" => $this->message['text']
+            ]);
+        }
 
         return $this->resultRedirectFactory
             ->setUrl(
@@ -111,23 +176,5 @@ class Process
             return false;
         }
         return $payment->getAdditionalInformation(AdditionalDataProvider::PAYMENT_FROM) === 'graphQl';
-    }
-    private function formatMessages($messageCollection)
-    {
-        $messages = [];
-        if ($messageCollection != null) {
-            $messages = $messageCollection->getItems();
-        }
-
-        $formattedMessages = [];
-        foreach ($messages as $message) {
-            if ($message instanceof MessageInterface) {
-                $formattedMessages[] = [
-                    "type" => $message->getType(),
-                    "text" => $message->getText()
-                ];
-            }
-        }
-        return $formattedMessages;
     }
 }
