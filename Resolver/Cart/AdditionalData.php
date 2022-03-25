@@ -2,7 +2,6 @@
 
 namespace Buckaroo\Magento2Graphql\Resolver\Cart;
 
-use Magento\Framework\Phrase;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
@@ -50,7 +49,7 @@ class AdditionalData implements ResolverInterface
             return $this->fieldListFactory->create($methodCode);
         } catch (\Throwable $th) {
             throw new GraphQlInputException(
-                new Phrase('Failed to retrieve additional buckaroo info for '.$methodCode),
+                __('Failed to retrieve additional buckaroo info for '.$methodCode),
                 $th
             );
         }

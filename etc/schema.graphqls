@@ -1,3 +1,18 @@
+#Queries
+
+type Query {
+    getBuckarooIdin (cartId: String!): BuckarooIdin @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\IdinResolver")
+    @doc(description: "Get iDIN info for this session")
+}
+
+#Mutations
+
+type Mutation {
+    verifyBuckarooIdin (input: BuckarooIdinInput!): BuckarooIdinOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\IdinOutputResolver") 
+    @doc(description: "Verify customer/session age")
+}
+
+
 # Overrides
 type AvailablePaymentMethod {
     buckaroo_additional: [BuckarooAdditionalData]
@@ -53,7 +68,6 @@ input BuckarooAfterpay {
     COCNumber: String @doc(description: "Customer COC number required for B2B (selectedBusiness = 2)")
     CompanyName: String @doc(description: "Company name required for B2B (selectedBusiness = 2)")
 }
-
 
 #Applepay
 input BuckarooApplepayInput {
@@ -167,4 +181,26 @@ type BuckarooMultipleValues {
     name: String!
     code: String!
     img: String
+}
+
+#idin
+
+type BuckarooIdin {
+    issuers: [BuckarooIdinIssuers]! @doc(description: "List of issuers available for iDIN verification")
+    active: Boolean! @doc(description: "iDIN is active or not")
+    verified: Boolean! @doc(description: "Age is verified for this customer/session")
+
+}
+type BuckarooIdinIssuers {
+    name: String! @doc(description: "Issuer name")
+    code: String! @doc(description: "Issuer code required for age verification")
+}
+
+
+input BuckarooIdinInput {
+    issuer: String! @doc(description: "Issuer code required for age verification")
+}
+
+type BuckarooIdinOutput {
+    redirect: String! @doc(description: "Url required for completion of age verification")
 }
