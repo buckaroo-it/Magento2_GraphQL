@@ -73,15 +73,32 @@ class Process
      */
     public function aroundHandleProcessedResponse(ProcessInterface $process, callable $proceed, $path, $arguments = [])
     {
-
         try {
             if ($this->isFromGraphQl($process->getOrder())) {
-                return $this->redirectWithData($path);
+                return $this->redirectWithData(
+                    $path,
+                    $process->getOrder()->getIncrementId(),
+                    $this->getQueryArguments($arguments)
+                );
             }
         } catch (\Throwable $th) {
             $this->logger->debug(__METHOD__ . $th->getMessage());
         }
         return $proceed($path, $arguments);
+    }
+    /**
+     * Get any query arguments set
+     *
+     * @param array $arguments
+     *
+     * @return array
+     */
+    private function getQueryArguments(array $arguments)
+    {
+        if (isset($arguments['_query'])) {
+           return $arguments['_query'];
+        }
+        return [];
     }
     /**
      * Override add error message to user
@@ -136,21 +153,26 @@ class Process
      * Redirect to spa/pwa with data
      *
      * @param string $path
+     * @param string|null $order_number
+     * @param array $queryArguments
      *
      * @return Magento\Framework\App\Response\RedirectInterface
      */
-    protected function redirectWithData(string $path)
+    protected function redirectWithData(string $path, string $order_number, array $queryArguments)
     {
         $data = [
             "route" => $path,
+            "order_number" => $order_number
         ];
 
         if (isset($this->message['type']) && isset($this->message['text'])) {
             $data = array_merge($data, [
-                "messageType" => $this->message['type'],
+                "message_type" => $this->message['type'],
                 "message" => $this->message['text']
             ]);
         }
+
+        $data = array_merge($data, $queryArguments);
 
         return $this->resultRedirectFactory
             ->setUrl(
