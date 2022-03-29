@@ -49,11 +49,11 @@ class OrderOutput implements ResolverInterface
         if (
             $response !== null &&
             isset($response->Services) &&
-            is_array($response->Services) &&
-            count($response->Services) &&
-            !empty($response->Services[0]->Parameters)
+            isset($response->Services->Service) &&
+            is_array($response->Services->Service->ResponseParameter) &&
+            count($response->Services->Service->ResponseParameter)
         ) {
-            return $this->formatAdditionalOutput($response->Services[0]->Parameters);
+            return $this->formatAdditionalOutput($response->Services->Service->ResponseParameter);
         }
     }
     /**
@@ -68,10 +68,10 @@ class OrderOutput implements ResolverInterface
         $additionalData = [];
         if (count($data)) {
             foreach ($data as $item) {
-                if (isset($item->Name) && isset($item->Value)) {
+                if (isset($item->Name) && isset($item->_)) {
                     $additionalData[] = [
                         "key" => $item->Name,
-                        "value" => $item->Value
+                        "value" => $item->_
                     ];
                 }
             }

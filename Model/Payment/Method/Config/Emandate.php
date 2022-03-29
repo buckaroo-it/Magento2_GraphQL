@@ -23,7 +23,7 @@ namespace Buckaroo\Magento2Graphql\Model\Payment\Method\Config;
 
 use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
 
-class Payconiq extends AbstractConfig
+class Emandate extends AbstractConfig
 {
     /**
      * @inheritDoc
@@ -32,13 +32,13 @@ class Payconiq extends AbstractConfig
     {
         return [
             [
-                "key" => "redirecturl",
-                "value" => $this->getConfigValue('redirecturl')
+                "key" => "banks",
+                "values" => $this->getConfigValue('banks')
             ]
         ];
     }
     protected function getConfigValue($key)
     {
-        return $this->configProvider->getConfig()['payment']['buckaroo']['payconiq'][$key];
+        return $this->configProvider->getConfig()['payment']['buckaroo']['emandate'][$key];
     }
 }
