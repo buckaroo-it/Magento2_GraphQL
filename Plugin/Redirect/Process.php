@@ -26,7 +26,7 @@ use Buckaroo\Magento2Graphql\Model\MainConfig;
 use Magento\Framework\Message\MessageInterface;
 use Magento\Framework\Controller\Result\Redirect;
 use Buckaroo\Magento2Graphql\Model\AdditionalDataProvider;
-use Buckaroo\Magento2\Controller\Redirect\ProcessInterface;
+use Buckaroo\Magento2\Controller\Redirect\Process as DefaultProcess;
 use Buckaroo\Magento2\Logging\Log;
 
 class Process
@@ -64,14 +64,14 @@ class Process
     /**
      * Override redirect process
      *
-     * @param ProcessInterface $process
+     * @param DefaultProcess $process
      * @param callable $proceed
      * @param string $path
      * @param array $arguments
      *
      * @return mixed
      */
-    public function aroundHandleProcessedResponse(ProcessInterface $process, callable $proceed, $path, $arguments = [])
+    public function aroundHandleProcessedResponse(DefaultProcess $process, callable $proceed, $path, $arguments = [])
     {
         try {
             if ($this->isFromGraphQl($process->getOrder())) {
@@ -103,13 +103,13 @@ class Process
     /**
      * Override add error message to user
      *
-     * @param ProcessInterface $process
+     * @param DefaultProcess $process
      * @param callable $proceed
      * @param string $message
      *
      * @return void
      */
-    public function aroundAddErrorMessage(ProcessInterface $process, callable $proceed, string $message)
+    public function aroundAddErrorMessage(DefaultProcess $process, callable $proceed, string $message)
     {
         $this->setMessage($message, MessageInterface::TYPE_ERROR);
         if (!$this->isFromGraphQl($process->getOrder())) {
@@ -120,13 +120,13 @@ class Process
     /**
      * Override add success message to user
      *
-     * @param ProcessInterface $process
+     * @param DefaultProcess $process
      * @param callable $proceed
      * @param string $message
      *
      * @return void
      */
-    public function aroundAddSuccessMessage(ProcessInterface $process, callable $proceed, string $message)
+    public function aroundAddSuccessMessage(DefaultProcess $process, callable $proceed, string $message)
     {
         $this->setMessage($message, MessageInterface::TYPE_SUCCESS);
         if (!$this->isFromGraphQl($process->getOrder())) {
