@@ -43,8 +43,8 @@
             </field>
 
             <field id="payment_processed_redirect" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Payment processed url</label>
-                <comment><![CDATA[Redirect url after payment was processed.]]></comment>
+                <label>Payment processed route</label>
+                <comment><![CDATA[Redirect route after payment was processed (relative to the base url).]]></comment>
                 <config_path>buckaroo_magento2/graphql/payment_processed_redirect</config_path>
                 <depends>
                     <field id="enable_graphql">1</field>

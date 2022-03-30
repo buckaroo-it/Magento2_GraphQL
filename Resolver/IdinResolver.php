@@ -69,20 +69,20 @@ class IdinResolver implements ResolverInterface
 
     public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
-        if (empty($args['cartId'])) {
+        if (empty($args['cart_id'])) {
             throw new GraphQlInputException(
-               __('Required parameter "cartId" is missing')
+               __('Required parameter "cart_id" is missing')
             );
         }
         try {
             $idin = $this->idinConfig->getIdinStatus(
-                $this->getQuote($args['cartId'], $context),
+                $this->getQuote($args['cart_id'], $context),
                 $this->getCustomer($context->getUserId())
             );
         } catch (LocalizedException $e) {
             throw $e;
         } catch (\Throwable $th) {
-            $this->logger->debug($th->getMessage());
+            $this->logger->debug(__METHOD__.$th->getMessage());
             throw new GraphQlInputException(
                __('Unknown buckaroo error occurred')
             );

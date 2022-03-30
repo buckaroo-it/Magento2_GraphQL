@@ -1,7 +1,7 @@
 #Queries
 
 type Query {
-    getBuckarooIdin (cartId: String!): BuckarooIdin @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\IdinResolver")
+    getBuckarooIdin (cart_id: String!): BuckarooIdin @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\IdinResolver")
     @doc(description: "Get iDIN info for this session")
 }
 
@@ -199,6 +199,7 @@ type BuckarooIdinIssuers {
 
 input BuckarooIdinInput {
     issuer: String! @doc(description: "Issuer code required for age verification")
+    cart_id: String! @doc(description: "Cart id required")
 }
 
 type BuckarooIdinOutput {

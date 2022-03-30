@@ -32,7 +32,7 @@ use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 class IdinOutputResolver implements ResolverInterface
 {
     /**
-     * @var Buckaroo\Magento2\Gateway\Http\TransactionBuilder\IdinBuilderInterface
+     * @var \Buckaroo\Magento2\Gateway\Http\TransactionBuilder\IdinBuilderInterface
      */
     protected $transactionBuilder;
 
@@ -66,13 +66,18 @@ class IdinOutputResolver implements ResolverInterface
     {
         if (!(isset($args['input']) && isset($args['input']['issuer']))) {
             throw new GraphQlInputException(
-                __('A idin issuer is required')
+                __('Required parameter "issuer" is missing')
+            );
+        }
+        if (empty($args['input']['cart_id'])) {
+            throw new GraphQlInputException(
+               __('Required parameter "cart_id" is missing')
             );
         }
         try {
-            $response = $this->sendIdinRequest($args['input']['issuer']);
+            $response = $this->sendIdinRequest($args['input']['issuer'], $args['input']['cart_id']);
         } catch (\Throwable $th) {
-            $this->logger->debug($th->getMessage());
+            $this->logger->debug(__METHOD__.$th->getMessage());
             throw new GraphQlInputException(
                 __('Unknown buckaroo error occurred')
             );
@@ -90,14 +95,17 @@ class IdinOutputResolver implements ResolverInterface
      * Send idin request
      *
      * @param string $issuer
+     * @param string $maskedQuoteId
      *
      * @return mixed $response
      * @throws \Exception
      */
-    protected function sendIdinRequest($issuer)
+    protected function sendIdinRequest($issuer, $maskedQuoteId)
     {
         $transaction = $this->transactionBuilder
             ->setIssuer($issuer)
+            ->setAdditionalParameter('idin_request_from', 'graphQl')
+            ->setAdditionalParameter('idin_masked_quote_id', $maskedQuoteId)
             ->build();
 
         return $this->gateway

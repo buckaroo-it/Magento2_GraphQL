@@ -74,31 +74,38 @@ class Process
     public function aroundHandleProcessedResponse(DefaultProcess $process, callable $proceed, $path, $arguments = [])
     {
         try {
-            if ($this->isFromGraphQl($process->getOrder())) {
+
+            
+            $queryArguments = $this->getQueryArguments($arguments);
+
+            if ($this->isIdinFromGraphQl($process->getResponseParameters())) {
                 return $this->redirectWithData(
-                    $path,
-                    $process->getOrder()->getIncrementId(),
-                    $this->getQueryArguments($arguments)
+                    array_merge(
+                        [
+                            "route" => $path,
+                            "cart_id" => $this->getCartId($process->getResponseParameters())
+                        ],
+                        $queryArguments
+                    )
+                );
+            }
+
+
+            if ($this->isOrderFromGraphQl($process->getOrder())) {
+                return $this->redirectWithData(
+                    array_merge(
+                        [
+                            "route" => $path,
+                            "order_number" => $process->getOrder()->getIncrementId()
+                        ],
+                        $queryArguments
+                    )
                 );
             }
         } catch (\Throwable $th) {
             $this->logger->debug(__METHOD__ . $th->getMessage());
         }
         return $proceed($path, $arguments);
-    }
-    /**
-     * Get any query arguments set
-     *
-     * @param array $arguments
-     *
-     * @return array
-     */
-    private function getQueryArguments(array $arguments)
-    {
-        if (isset($arguments['_query'])) {
-           return $arguments['_query'];
-        }
-        return [];
     }
     /**
      * Override add error message to user
@@ -112,7 +119,7 @@ class Process
     public function aroundAddErrorMessage(DefaultProcess $process, callable $proceed, string $message)
     {
         $this->setMessage($message, MessageInterface::TYPE_ERROR);
-        if (!$this->isFromGraphQl($process->getOrder())) {
+        if (!$this->isFromGraphQl($process)) {
             $proceed($message);
         }
     }
@@ -129,7 +136,7 @@ class Process
     public function aroundAddSuccessMessage(DefaultProcess $process, callable $proceed, string $message)
     {
         $this->setMessage($message, MessageInterface::TYPE_SUCCESS);
-        if (!$this->isFromGraphQl($process->getOrder())) {
+        if (!$this->isFromGraphQl($process)) {
             $proceed($message);
         }
     }
@@ -152,19 +159,12 @@ class Process
     /**
      * Redirect to spa/pwa with data
      *
-     * @param string $path
-     * @param string|null $order_number
-     * @param array $queryArguments
+     * @param array $data
      *
      * @return Magento\Framework\App\Response\RedirectInterface
      */
-    protected function redirectWithData(string $path, string $order_number, array $queryArguments)
+    protected function redirectWithData(array $data)
     {
-        $data = [
-            "route" => $path,
-            "order_number" => $order_number
-        ];
-
         if (isset($this->message['type']) && isset($this->message['text'])) {
             $data = array_merge($data, [
                 "message_type" => $this->message['type'],
@@ -172,12 +172,32 @@ class Process
             ]);
         }
 
-        $data = array_merge($data, $queryArguments);
-
         return $this->resultRedirectFactory
             ->setUrl(
                 $this->config->getBaseUrl() . "/" . $this->config->getPaymentProcessedPath() . '?' . http_build_query($data)
             );
+    }
+    /**
+     * Check if the request is from graphql
+     *
+     * @param DefaultProcess $process
+     *
+     * @return boolean
+     */
+    public function isFromGraphQl(DefaultProcess $process)
+    {
+        return $this->isOrderFromGraphQl($process->getOrder()) || $this->isIdinFromGraphQl($process->getResponseParameters());
+    }
+    /**
+     * Check if is a idin request originating from graphql
+     *
+     * @param array $response
+     *
+     * @return boolean
+     */
+    protected function isIdinFromGraphQl($response)
+    {
+        return isset($response['add_idin_request_from']) && $response['add_idin_request_from'] === 'graphQl';
     }
     /**
      * Check if processed order came from graphQl
@@ -186,7 +206,7 @@ class Process
      *
      * @return boolean
      */
-    protected function isFromGraphQl(OrderInterface $order)
+    protected function isOrderFromGraphQl(OrderInterface $order)
     {
         if ($order->getIncrementId() === null) {
             return false;
@@ -198,5 +218,32 @@ class Process
             return false;
         }
         return $payment->getAdditionalInformation(AdditionalDataProvider::PAYMENT_FROM) === 'graphQl';
+    }
+     /**
+     * Get any query arguments set
+     *
+     * @param array $arguments
+     *
+     * @return array
+     */
+    private function getQueryArguments(array $arguments)
+    {
+        if (isset($arguments['_query'])) {
+           return $arguments['_query'];
+        }
+        return [];
+    }
+    /**
+     * Get cart id from response
+     *
+     * @param array $response
+     *
+     * @return string|null
+     */
+    protected function getCartId(array $response)
+    {
+        if(isset($response['add_idin_masked_quote_id'])) {
+            return $response['add_idin_masked_quote_id'];
+        }
     }
 }
