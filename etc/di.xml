@@ -43,4 +43,7 @@
     <type name="Buckaroo\Magento2\Controller\Redirect\Process">
         <plugin name="buckaroo_graphql_redirect_process" type="Buckaroo\Magento2Graphql\Plugin\Redirect\Process" sortOrder="1"/>
     </type>
+    <type name="Buckaroo\Magento2SecondChance\Controller\Checkout\SecondChance">
+        <plugin name="buckaroo_graphql_second_chance" type="Buckaroo\Magento2Graphql\Plugin\SecondChance" sortOrder="1"/>
+    </type>
 </config>
