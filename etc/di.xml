@@ -25,6 +25,7 @@
             <argument name="configProviders" xsi:type="array">
                 <item name="buckaroo_magento2_afterpay" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Afterpay</item>
                 <item name="buckaroo_magento2_afterpay2" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Afterpay2</item>
+                <item name="buckaroo_magento2_afterpay20" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Afterpay20</item>
                 <item name="buckaroo_magento2_applepay" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Applepay</item>
                 <item name="buckaroo_magento2_billink" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Billink</item>
                 <item name="buckaroo_magento2_creditcard" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Creditcard</item>
