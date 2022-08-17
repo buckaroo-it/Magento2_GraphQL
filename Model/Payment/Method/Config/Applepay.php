@@ -63,23 +63,28 @@ class Applepay extends AbstractConfig
                 "key" => "availableButtons",
                 "value" => $this->getAvailableButtons()
             ]
-           
+
         ];
     }
+
     protected function getConfigValue($key)
     {
         return $this->configProvider->getConfig()['payment']['buckaroo']['applepay'][$key];
     }
+
     /**
      * Get list of available buttons
      *
-     * @return void
+     * @return string
      */
     protected function getAvailableButtons()
     {
+        $result = '';
         $availableButtons = $this->getConfigValue('availableButtons');
-        if (count($availableButtons)) {
-            return implode(",", $availableButtons);
+        if (is_countable($availableButtons) && count($availableButtons)) {
+            $result = implode(",", $availableButtons);
         }
+
+        return $result;
     }
 }
