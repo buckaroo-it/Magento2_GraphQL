@@ -22,8 +22,28 @@ class OrderOutput implements ResolverInterface
     {
         return [
             "redirect" => $this->getRedirect(),
-            "data" => $this->getAdditionalOutputData()
+            "data" => $this->getAdditionalOutputData(),
+            "transaction_id" => $this->getTransactionId()
         ];
+    }
+
+    /**
+     * Get it for transaction
+     *
+     * @return string|null
+     */
+    protected function getTransactionId()
+    {
+        $response = $this->getResponse();
+
+        if (isset($response['brq_transactions']) && !empty($response['brq_transactions'])) {
+            return $response['brq_transactions'];
+        }
+
+        if (isset($response['brq_datarequest']) && !empty($response['brq_datarequest'])) {
+            return $response['brq_datarequest'];
+        }
+
     }
     /**
      * Get redirect url

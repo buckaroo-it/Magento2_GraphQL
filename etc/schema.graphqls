@@ -1,8 +1,11 @@
 #Queries
 
 type Query {
-    getBuckarooIdin (cartId: String!): BuckarooIdin @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\IdinResolver")
+    getBuckarooIdin (cart_id: String!): BuckarooIdin @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\IdinResolver")
     @doc(description: "Get iDIN info for this session")
+
+    getBuckarooGiftcardTransactions (cart_id: String!): BuckarooGiftcardTransactions @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\GiftcardTransactionListResolver")
+    @doc(description: "Get giftcard transactions")
 }
 
 #Mutations
@@ -10,8 +13,57 @@ type Query {
 type Mutation {
     verifyBuckarooIdin (input: BuckarooIdinInput!): BuckarooIdinOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\IdinOutputResolver") 
     @doc(description: "Verify customer/session age")
+
+    buckarooProcessTransaction(
+    input: BuckarooProcessTransactionInput
+  ): BuckarooProcessTransactionOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\ProcessTransactionOutput") 
+
+   buckarooProcessGiftcardTransaction(
+    input: BuckarooProcessGiftcardTransactionInput
+  ): BuckarooProcessGiftcardTransactionOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\GiftcardTransactionResolver") 
 }
 
+input BuckarooProcessGiftcardTransactionInput {
+  cart_id: String! @doc(description: "Cart id")
+  giftcard_id: String!  @doc(description: "Giftcard id")
+  card_number: String!  @doc(description: "Giftcard number")
+  card_pin: String!  @doc(description: "Giftcard pin")
+}
+
+type BuckarooGiftcardTransactions {
+    remainder_amount: Float!,
+    already_paid: Float!,
+    transactions: [GiftcardTransaction],
+    available_payment_methods:[GiftcardAvailableMethods]  @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Giftcard\\AvailablePaymentMethods") 
+}
+
+type BuckarooProcessGiftcardTransactionOutput {
+  remainder_amount: Float!,
+  already_paid: Float!,
+  transaction: GiftcardTransaction!,
+  available_payment_methods:[GiftcardAvailableMethods]  @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Giftcard\\AvailablePaymentMethods") 
+}
+
+type GiftcardAvailableMethods {
+    title: String!,
+    code: String!
+}
+type GiftcardTransaction {
+    amount: Float! @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Giftcard\\Amount")
+    currency: String! @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Giftcard\\Currency")
+    name: String! @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Giftcard\\Name")
+    transaction_id: String! @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Giftcard\\TransactionId")
+}
+
+
+input BuckarooProcessTransactionInput {
+  transaction_id: String!  @doc(description: "Buckaroo transaction id")
+  cart_id: String! @doc(description: "Cart id")
+}
+
+type BuckarooProcessTransactionOutput {
+  payment_status: String
+}
 
 # Overrides
 type AvailablePaymentMethod {
@@ -36,7 +88,7 @@ type Order {
 input BuckarooAdditionalInput {
     buckaroo_magento2_afterpay: BuckarooAfterpay
     buckaroo_magento2_afterpay2: BuckarooAfterpay
-    buckaroo_magento2_afterpay20: BuckarooAfterpay
+    buckaroo_magento2_afterpay20: BuckarooAfterpay20
     buckaroo_magento2_applepay: BuckarooApplepayInput
     buckaroo_magento2_billink: BuckarooBillinkInput
     buckaroo_magento2_capayablein3: BuckarooIn3Input
@@ -58,7 +110,6 @@ input BuckarooAdditionalInput {
 
 input BuckarooAfterpay {
     termsCondition: String!  @doc(description: "Customer is required to accept the terms and conditions")
-    customer_gender: String! @doc(description: "Customer gender 1 for 'male' 2 for 'female'")
     customer_billingName: String! @doc(description: "Customer billing name")
     selectedBusiness: String! @doc(description: "Business methods that will be used 1 for B2C, 2 for B2B")
     customer_iban: String! @doc(description: "Customer IBAN required for B2C (selectedBusiness = 1)")
@@ -69,6 +120,14 @@ input BuckarooAfterpay {
     CompanyName: String @doc(description: "Company name required for B2B (selectedBusiness = 2)")
 }
 
+input BuckarooAfterpay20 {
+    termsCondition: String!  @doc(description: "Customer is required to accept the terms and conditions")
+    customer_billingName: String! @doc(description: "Customer billing name")
+    customer_DoB: String! @doc(description: "Customer date of birth format `d/m/Y`")
+    customer_telephone: String @doc(description: "Customer phone number")
+    customer_identificationNumber: String @doc(description: "Customer identification number required if billing country is finland (FI).")
+    customer_coc: String @doc(description: "Customer COC number required for B2B")
+}
 #Applepay
 input BuckarooApplepayInput {
     applepayTransaction: String @doc(description: "Transaction data received from Buckaroo JS SDK")
@@ -88,12 +147,8 @@ input BuckarooBillinkInput {
 
 
 input BuckarooIn3Input {
-    customer_gender: String! @doc(description: "Customer gender 1 for 'male' 2 for 'female'")
     customer_billingName: String! @doc(description: "Customer billing name")
     customer_DoB: String! @doc(description: "Customer date of birth format `d/m/Y`")
-    customer_orderAs: String!  @doc(description: "Customer type, possible values: `Debtor`, `Company`, `SoleProprietor`")
-    customer_cocnumber: String @doc(description: "Customer COC number required for B2B (customer_orderAs ether `Company` or `SoleProprietor`)")
-    customer_companyName: String @doc(description: "Company name required for B2B (customer_orderAs ether `Company` or `SoleProprietor`)")
 }
 
 #Creditcard
@@ -156,7 +211,6 @@ input BuckarooSepaDirectDebitInput {
 #Tinka
 input BuckarooTinkaInput {
     customer_billingName: String! @doc(description: "Customer first name")
-    customer_gender: String! @doc(description: "Customer gender 1 for 'male' 2 for 'female'")
     customer_DoB: String! @doc(description: "Customer date of birth format `d/m/Y`")
 }
 
@@ -164,6 +218,7 @@ input BuckarooTinkaInput {
 type BuckarooOrderOutput {
     redirect: String @doc(description: "Url required for completing the payment")
     data: [BuckarooAdditionalOutputData] @doc(description: "Additional fields required for inline payments")
+    transaction_id: String @doc(description: "Buckaroo transaction id")
 }
 
 type BuckarooAdditionalOutputData {
