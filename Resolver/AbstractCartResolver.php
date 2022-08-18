@@ -48,10 +48,10 @@ abstract class AbstractCartResolver implements ResolverInterface
     {
         if (!(empty($args['cart_id']) || empty($args['input']['cart_id']))) {
             throw new GraphQlInputException(
-               __('Required parameter "cart_id" is missing')
+                __('Required parameter "cart_id" is missing')
             );
         }
-       
+
         return [];
     }
     protected function getQuote(string $maskedQuoteId, ContextInterface $context)
@@ -59,7 +59,7 @@ abstract class AbstractCartResolver implements ResolverInterface
         // Shopping Cart validation
         return $this->getCartForUser->execute(
             $maskedQuoteId,
-            $context->getUserId(), 
+            $context->getUserId(),
             (int)$context->getExtensionAttributes()->getStore()->getId()
         );
     }

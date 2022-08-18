@@ -15,14 +15,24 @@ type Mutation {
     @doc(description: "Verify customer/session age")
 
     buckarooProcessTransaction(
-    input: BuckarooProcessTransactionInput
-  ): BuckarooProcessTransactionOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\ProcessTransactionOutput") 
+        input: BuckarooProcessTransactionInput!
+    ): BuckarooProcessTransactionOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\ProcessTransactionOutput") 
+
+    setBuckarooReturnUrl(
+        input: BuckarooReturnUrlInput!
+    ): BuckarooReturnUrl @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\SetReturnUrl")
 
    buckarooProcessGiftcardTransaction(
-    input: BuckarooProcessGiftcardTransactionInput
-  ): BuckarooProcessGiftcardTransactionOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\GiftcardTransactionResolver") 
+        input: BuckarooProcessGiftcardTransactionInput
+    ): BuckarooProcessGiftcardTransactionOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\GiftcardTransactionResolver") 
 }
-
+input BuckarooReturnUrlInput {
+    return_url: String! @doc(description: "Link to the finish/failed order page"),
+    cart_id: String! @doc(description: "Cart id")
+}
+type BuckarooReturnUrl {
+    success:Boolean
+}
 input BuckarooProcessGiftcardTransactionInput {
   cart_id: String! @doc(description: "Cart id")
   giftcard_id: String!  @doc(description: "Giftcard id")
@@ -58,11 +68,11 @@ type GiftcardTransaction {
 
 input BuckarooProcessTransactionInput {
   transaction_id: String!  @doc(description: "Buckaroo transaction id")
-  cart_id: String! @doc(description: "Cart id")
 }
 
 type BuckarooProcessTransactionOutput {
-  payment_status: String
+  payment_status: String!,
+  status_code: Int!
 }
 
 # Overrides

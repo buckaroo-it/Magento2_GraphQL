@@ -8,6 +8,7 @@ use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Buckaroo\Magento2Graphql\Model\Payment\Method\ConfigFactory;
 use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
+
 /**
  * 
  * methods that end up here were already validated (via ::isAvailable)
@@ -49,7 +50,7 @@ class AdditionalData implements ResolverInterface
             return $this->fieldListFactory->create($methodCode);
         } catch (\Throwable $th) {
             throw new GraphQlInputException(
-                __('Failed to retrieve additional buckaroo info for '.$methodCode),
+                __('Failed to retrieve additional buckaroo info for ' . $methodCode),
                 $th
             );
         }
