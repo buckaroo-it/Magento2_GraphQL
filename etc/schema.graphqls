@@ -14,9 +14,9 @@ type Mutation {
     verifyBuckarooIdin (input: BuckarooIdinInput!): BuckarooIdinOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\IdinOutputResolver") 
     @doc(description: "Verify customer/session age")
 
-    buckarooProcessTransaction(
-        input: BuckarooProcessTransactionInput!
-    ): BuckarooProcessTransactionOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\ProcessTransactionOutput") 
+    buckarooPaymentTransactionStatus(
+        input: BuckarooPaymentTransactionInput!
+    ): BuckarooPaymentTransactionOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\ProcessTransactionOutput") 
 
     setBuckarooReturnUrl(
         input: BuckarooReturnUrlInput!
@@ -66,11 +66,11 @@ type GiftcardTransaction {
 }
 
 
-input BuckarooProcessTransactionInput {
+input BuckarooPaymentTransactionInput {
   transaction_id: String!  @doc(description: "Buckaroo transaction id")
 }
 
-type BuckarooProcessTransactionOutput {
+type BuckarooPaymentTransactionOutput {
   payment_status: String!,
   status_code: Int!
 }

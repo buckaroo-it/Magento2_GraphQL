@@ -113,7 +113,7 @@ class ProcessTransactionOutput implements ResolverInterface
                 );
             }
 
-            if ($context->getUserId() !== $order->getCustomerId()) {
+            if ($context->getUserId() !== (int)$order->getCustomerId()) {
                 throw new GraphQlAuthorizationException(
                     __('The current user cannot perform operations on this order')
                 );
