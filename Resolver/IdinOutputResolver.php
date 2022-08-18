@@ -75,9 +75,12 @@ class IdinOutputResolver implements ResolverInterface
             );
         }
         try {
-            $response = $this->sendIdinRequest($args['input']['issuer'], $args['input']['cart_id']);
+            $response = $this->sendIdinRequest($args['input']);
+        } catch (GraphQlInputException $th) {
+            $this->logger->debug(__METHOD__.(string)$th);
+            throw $th;
         } catch (\Throwable $th) {
-            $this->logger->debug(__METHOD__.$th->getMessage());
+            $this->logger->debug(__METHOD__.(string)$th);
             throw new GraphQlInputException(
                 __('Unknown buckaroo error occurred')
             );
@@ -100,18 +103,45 @@ class IdinOutputResolver implements ResolverInterface
      * @return mixed $response
      * @throws \Exception
      */
-    protected function sendIdinRequest($issuer, $maskedQuoteId)
+    protected function sendIdinRequest($input)
     {
         $transaction = $this->transactionBuilder
-            ->setIssuer($issuer)
+            ->setIssuer($input['issuer'])
             ->setAdditionalParameter('idin_request_from', 'graphQl')
-            ->setAdditionalParameter('idin_masked_quote_id', $maskedQuoteId)
-            ->build();
+            ->setAdditionalParameter('idin_masked_quote_id', $input['cart_id']);
+        
+            if (isset($input['return_url']) && $this->validReturnUrl($input['return_url'])) {
+                $transaction->setAdditionalParameter('idin_return_url', $input['return_url']);
+            }
 
+        
         return $this->gateway
             ->setMode(
                 $this->transactionBuilder->getMode()
             )
-            ->authorize($transaction)[0];
+            ->authorize(
+                $transaction->build()
+            )[0];
+    }
+
+    /**
+     * Check if the return url is valid
+     *
+     * @param mixed $returnUrl
+     *
+     * @return boolean
+     * @throws GraphQlInputException
+     */
+    protected function validReturnUrl($returnUrl)
+    {
+        if (
+            filter_var($returnUrl, FILTER_VALIDATE_URL) === false ||
+            !in_array(parse_url($returnUrl, PHP_URL_SCHEME), ['http', 'https'])
+        ) {
+            throw new GraphQlInputException(
+                __('A valid "return_url" is required ')
+            );
+        }
+        return true;
     }
 }

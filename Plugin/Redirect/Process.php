@@ -74,8 +74,6 @@ class Process
     public function aroundHandleProcessedResponse(DefaultProcess $process, callable $proceed, $path, $arguments = [])
     {
         try {
-
-            
             $queryArguments = $this->getQueryArguments($arguments);
 
             if ($this->isIdinFromGraphQl($process->getResponseParameters())) {
@@ -86,6 +84,9 @@ class Process
                             "cart_id" => $this->getCartId($process->getResponseParameters())
                         ],
                         $queryArguments
+                    ),
+                    $this->getReturnUrl(
+                        $process->getResponseParameters()
                     )
                 );
             }
@@ -160,10 +161,11 @@ class Process
      * Redirect to spa/pwa with data
      *
      * @param array $data
+     * @param string $returnUrl
      *
      * @return Magento\Framework\App\Response\RedirectInterface
      */
-    protected function redirectWithData(array $data)
+    protected function redirectWithData(array $data, string $returnUrl = null)
     {
         if (isset($this->message['type']) && isset($this->message['text'])) {
             $data = array_merge($data, [
@@ -172,9 +174,13 @@ class Process
             ]);
         }
 
+        if ($returnUrl === null) {
+            $returnUrl = $this->config->getBaseUrl() . "/" . $this->config->getPaymentProcessedPath();
+        }
+
         return $this->resultRedirectFactory
             ->setUrl(
-                $this->config->getBaseUrl() . "/" . $this->config->getPaymentProcessedPath() . '?' . http_build_query($data)
+                $returnUrl . '?' . http_build_query($data)
             );
     }
     /**
@@ -219,7 +225,7 @@ class Process
         }
         return $payment->getAdditionalInformation(AdditionalDataProvider::PAYMENT_FROM) === 'graphQl';
     }
-     /**
+    /**
      * Get any query arguments set
      *
      * @param array $arguments
@@ -229,7 +235,7 @@ class Process
     private function getQueryArguments(array $arguments)
     {
         if (isset($arguments['_query'])) {
-           return $arguments['_query'];
+            return $arguments['_query'];
         }
         return [];
     }
@@ -242,8 +248,26 @@ class Process
      */
     protected function getCartId(array $response)
     {
-        if(isset($response['add_idin_masked_quote_id'])) {
+        if (isset($response['add_idin_masked_quote_id'])) {
             return $response['add_idin_masked_quote_id'];
         }
+    }
+    /**
+     * Get return url from response
+     *
+     * @param array $response
+     *
+     * @return string|null
+     */
+    protected function getReturnUrl(array $response)
+    {
+        if (!isset($response['add_idin_return_url'])) {
+            return;
+        }
+        $cartId = $this->getCartId($response);
+        if ($cartId === null) {
+            return $response['add_idin_return_url'];
+        }
+        return $response['add_idin_return_url'] . "/" . $cartId;
     }
 }

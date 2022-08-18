@@ -255,6 +255,7 @@ type BuckarooIdinIssuers {
 input BuckarooIdinInput {
     issuer: String! @doc(description: "Issuer code required for age verification")
     cart_id: String! @doc(description: "Cart id required")
+    return_url: String @doc(description: "Page address after return from iDIN verification")
 }
 
 type BuckarooIdinOutput {
