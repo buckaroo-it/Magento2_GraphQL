@@ -27,13 +27,12 @@ use Buckaroo\Magento2\Model\ConfigProvider\Idin;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\QuoteGraphQl\Model\Cart\GetCartForUser;
-use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use Buckaroo\Magento2Graphql\Resolver\AbstractCartResolver;
 use Magento\Customer\Model\ResourceModel\CustomerRepository;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
-use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 
-class IdinResolver implements ResolverInterface
+class IdinResolver extends AbstractCartResolver
 {
     /**
      * @var Idin
@@ -56,24 +55,21 @@ class IdinResolver implements ResolverInterface
     private $logger;
 
     public function __construct(
-        Idin $idinConfig,
         GetCartForUser $getCartForUser,
+        Idin $idinConfig,
         CustomerRepository $customerRepository,
         Log $logger
     ) {
+        parent::__construct($getCartForUser);
         $this->idinConfig = $idinConfig;
-        $this->getCartForUser = $getCartForUser;
         $this->customerRepository = $customerRepository;
         $this->logger = $logger;
     }
 
     public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
-        if (empty($args['cart_id'])) {
-            throw new GraphQlInputException(
-               __('Required parameter "cart_id" is missing')
-            );
-        }
+        parent::resolve($field, $context, $info, $value, $args);
+
         try {
             $idin = $this->idinConfig->getIdinStatus(
                 $this->getQuote($args['cart_id'], $context),
@@ -92,15 +88,6 @@ class IdinResolver implements ResolverInterface
             'active' => $idin['active'],
             'verified' => $idin['verified']
         ];
-    }
-    protected function getQuote(string $maskedQuoteId, ContextInterface $context)
-    {
-        // Shopping Cart validation
-        return $this->getCartForUser->execute(
-            $maskedQuoteId,
-            $context->getUserId(), 
-            (int)$context->getExtensionAttributes()->getStore()->getId()
-        );
     }
     /**
      * Get customer by id
