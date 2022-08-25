@@ -27,7 +27,7 @@ type Mutation {
     ): BuckarooProcessGiftcardTransactionOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\GiftcardTransactionResolver") 
 }
 input BuckarooReturnUrlInput {
-    return_url: String! @doc(description: "Link to the finish/failed order page"),
+    return_url: String! @doc(description: "Link to the success/failed order page"),
     cart_id: String! @doc(description: "Cart id")
 }
 type BuckarooReturnUrl {
