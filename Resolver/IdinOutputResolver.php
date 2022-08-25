@@ -72,7 +72,7 @@ class IdinOutputResolver implements ResolverInterface
         try {
             $response = $this->sendIdinRequest($args['input']['issuer']);
         } catch (\Throwable $th) {
-            $this->logger->debug($th->getMessage());
+            $this->logger->addDebug((string)$th);
             throw new GraphQlInputException(
                 __('Unknown buckaroo error occurred')
             );

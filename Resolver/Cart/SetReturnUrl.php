@@ -19,35 +19,23 @@
  * @license   https://tldrlegal.com/license/mit-license
  */
 
-namespace Buckaroo\Magento2Graphql\Resolver;
+namespace Buckaroo\Magento2Graphql\Resolver\Cart;
 
 use Buckaroo\Magento2\Logging\Log;
-use Buckaroo\Magento2\Model\ConfigProvider\Idin;
-
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\QuoteGraphQl\Model\Cart\GetCartForUser;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Buckaroo\Magento2Graphql\Resolver\AbstractCartResolver;
-use Magento\Customer\Model\ResourceModel\CustomerRepository;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 
-class IdinResolver extends AbstractCartResolver
+class SetReturnUrl extends AbstractCartResolver
 {
-    /**
-     * @var Idin
-     */
-    protected $idinConfig;
 
+    public const ADDITIONAL_RETURN_URL = 'buckaroo_return_url';
     /**
      * @var GetCartForUser
      */
     protected $getCartForUser;
-
-    /**
-     * @var CustomerRepository
-     */
-    protected $customerRepository;
 
     /**
      * @var Log
@@ -56,51 +44,47 @@ class IdinResolver extends AbstractCartResolver
 
     public function __construct(
         GetCartForUser $getCartForUser,
-        Idin $idinConfig,
-        CustomerRepository $customerRepository,
         Log $logger
     ) {
         parent::__construct($getCartForUser);
-        $this->idinConfig = $idinConfig;
-        $this->customerRepository = $customerRepository;
         $this->logger = $logger;
     }
 
     public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
+
+
         parent::resolve($field, $context, $info, $value, $args);
 
-        try {
-            $idin = $this->idinConfig->getIdinStatus(
-                $this->getQuote($args['cart_id'], $context),
-                $this->getCustomer($context->getUserId())
+        if (empty($args['input']['return_url'])) {
+            throw new GraphQlInputException(
+                __('Required parameter "return_url" is missing')
             );
-        } catch (LocalizedException $e) {
-            throw $e;
+        }
+
+        $returnUrl = $args['input']['return_url'];
+        $cartId = $args['input']['cart_id'];
+        if (
+            filter_var($returnUrl, FILTER_VALIDATE_URL) === false ||
+            !in_array(parse_url($returnUrl, PHP_URL_SCHEME), ['http', 'https'])
+        ) {
+            throw new GraphQlInputException(
+                __('A valid "return_url" is required ')
+            );
+        }
+
+        try {
+            $quote = $this->getQuote($cartId, $context);
+            $quote->getPayment()->setAdditionalInformation(self::ADDITIONAL_RETURN_URL, "{$returnUrl}/{$cartId}");
         } catch (\Throwable $th) {
-            $this->logger->addDebug($th);
+            $this->logger->addDebug((string)$th);
             throw new GraphQlInputException(
                 __('Unknown buckaroo error occurred')
             );
         }
+
         return [
-            'issuers' => $this->idinConfig->getIssuers(),
-            'active' => $idin['active'],
-            'verified' => $idin['verified']
+            "success" => true
         ];
-    }
-    /**
-     * Get customer by id
-     *
-     * @param mixed $customerId
-     *
-     * @return CustomerInterface|null
-     */
-    public function getCustomer($customerId)
-    {
-        if (empty($customerId)) {
-            return;
-        }
-        return $this->customerRepository->getById($customerId);
     }
 }

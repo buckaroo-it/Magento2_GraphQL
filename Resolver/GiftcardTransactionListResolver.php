@@ -70,13 +70,13 @@ class GiftcardTransactionListResolver extends AbstractCartResolver
                 $quote
             );
         } catch (LocalizedException $e) {
-            $this->logger->debug($e->getMessage());
+            $this->logger->addDebug((string)$e);
             throw $e;
         } catch (ApiException $e) {
-            $this->logger->debug($e->getMessage());
+            $this->logger->addDebug((string)$e);
             throw $e;
         } catch (\Throwable $th) {
-            $this->logger->debug($th->getMessage());
+            $this->logger->addDebug((string)$th);
             throw new GraphQlInputException(
                 __('Unknown buckaroo error occurred')
             );

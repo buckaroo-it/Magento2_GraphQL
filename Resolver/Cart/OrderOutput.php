@@ -36,14 +36,9 @@ class OrderOutput implements ResolverInterface
     {
         $response = $this->getResponse();
 
-        if (isset($response['brq_transactions']) && !empty($response['brq_transactions'])) {
-            return $response['brq_transactions'];
+        if (isset($response->Key) && !empty($response->Key)) {
+            return $response->Key;
         }
-
-        if (isset($response['brq_datarequest']) && !empty($response['brq_datarequest'])) {
-            return $response['brq_datarequest'];
-        }
-
     }
     /**
      * Get redirect url
