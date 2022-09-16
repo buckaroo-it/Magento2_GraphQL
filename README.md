@@ -21,12 +21,12 @@ This plugin is needed for our [Hÿva React checkout extension](https://github.co
 ### Requirements
 To use the plugin you must use: 
 - Magento Open Source version 2.3.x & 2.4.x
-- Buckaroo Magento 2 Payment module 1.39.0 or greater 
+- Buckaroo Magento 2 Payment module 1.39.0 or higher.
 
 ## Installation
   - Install the module composer by running `composer require buckaroo/module-magento2graphql`
-  - enable the module by running `php bin/magento module:enable Buckaroo_Magento2Graphql`
-  - apply database updates by running `php bin/magento setup:upgrade`
+  - Enable the module by running `php bin/magento module:enable Buckaroo_Magento2Graphql`
+  - Apply database updates by running `php bin/magento setup:upgrade`
   - Flush the cache by running `php bin/magento cache:flush`
 
 ## Usage
@@ -59,7 +59,7 @@ query {
   - Set the return url using our custom migration `setBuckarooReturnUrl` required in order for the payment engine to redirect back to your application after the payment was completed/canceled/failed
   - Finally execute the the default `placeOrder` that will return a redirect url for the payment engine to complete the payment
 
-For Ideal we have the following example:
+For iDEAL we have the following example:
 ```graphql
   mutation doBuckarooPayment(
   $cartId: String!
@@ -125,3 +125,6 @@ If you want to contribute as well, then please follow our [Contribution Guidelin
 <p align="left">
   <img src="https://www.buckaroo.nl/media/3651/graphql_versioning.png" width="500px" position="center">
 </p>
+
+<b>Please note:</b><br>
+This file has been prepared with the greatest possible care and is subject to language and/or spelling errors.
