@@ -20,8 +20,8 @@ This plugin is needed for our [Hÿva React checkout extension](https://github.co
 
 ### Requirements
 To use the plugin you must use: 
-- Magento Open Source version 2.3.x & 2.4.x
-- Buckaroo Magento 2 Payment module 1.39.0 or higher.
+- Magento Open Source version 2.4.x
+- Buckaroo Magento 2 Payment module 1.43.0 or higher.
 
 ## Installation
   - Install the module composer by running `composer require buckaroo/module-magento2graphql`
