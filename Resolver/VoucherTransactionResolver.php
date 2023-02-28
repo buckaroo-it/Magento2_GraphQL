@@ -22,18 +22,19 @@
 namespace Buckaroo\Magento2Graphql\Resolver;
 
 use Magento\Quote\Model\Quote;
-
 use Buckaroo\Magento2\Logging\Log;
+
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\QuoteGraphQl\Model\Cart\GetCartForUser;
-use Buckaroo\Magento2\Helper\PaymentGroupTransaction;
 use Buckaroo\Magento2\Model\Giftcard\Api\ApiException;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Buckaroo\Magento2Graphql\Resolver\AbstractCartResolver;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
+use Buckaroo\Magento2\Model\Giftcard\Response\Giftcard as GiftcardResponse;
+use Buckaroo\Magento2\Model\Voucher\ApplyVoucherRequestInterface;
 
-class GiftcardTransactionListResolver extends AbstractCartResolver
+class VoucherTransactionResolver extends AbstractCartResolver
 {
     /**
      * @var GetCartForUser
@@ -46,28 +47,40 @@ class GiftcardTransactionListResolver extends AbstractCartResolver
     private $logger;
 
     /**
-     * @var \Buckaroo\Magento2\Helper\PaymentGroupTransaction
+     * @var \Buckaroo\Magento2\Model\Voucher\ApplyVoucherRequestInterface
      */
-    protected $groupTransaction;
+    protected $voucherRequest;
+
+    /**
+     * @var \Buckaroo\Magento2\Model\Giftcard\Response\Giftcard
+     */
+    protected $giftcardResponse;
 
     public function __construct(
         GetCartForUser $getCartForUser,
         Log $logger,
-        PaymentGroupTransaction $groupTransaction
+        ApplyVoucherRequestInterface $voucherRequest,
+        GiftcardResponse $giftcardResponse
     ) {
         parent::__construct($getCartForUser);
         $this->logger = $logger;
-        $this->groupTransaction = $groupTransaction;
+        $this->voucherRequest = $voucherRequest;
+        $this->giftcardResponse = $giftcardResponse;
     }
 
     public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
         parent::resolve($field, $context, $info, $value, $args);
 
+        if (!$this->argumentExists($args, 'voucher_code')) {
+            throw new GraphQlInputException(__('Parameter `voucher_code` is required'));
+        }
+
         try {
-            $quote = $this->getQuote($args['cart_id'], $context);
+            $quote = $this->getQuote($args['input']['cart_id'], $context);
             return $this->getResponse(
-                $quote
+                $quote,
+                $this->build($quote, $args)->send()
             );
         } catch (LocalizedException $e) {
             $this->logger->addDebug((string)$e);
@@ -85,65 +98,43 @@ class GiftcardTransactionListResolver extends AbstractCartResolver
         }
     }
 
-    protected function getResponse(Quote $quote)
+    protected function getResponse(Quote $quote, $response)
     {
+        $this->giftcardResponse->set($response, $quote);
+
+        if ($this->giftcardResponse->getErrorMessage() !== null) {
+            throw new ApiException($this->giftcardResponse->getErrorMessage());
+        }
         return [
-            'remainder_amount' => $this->getRemainderAmount($quote),
-            'already_paid' => $this->getAlreadyPaid($quote),
-            'transactions' => $this->getTransactions($quote),
-            'quote' => $quote
+            'remainder_amount' => $this->giftcardResponse->getRemainderAmount(),
+            'already_paid' => $this->giftcardResponse->getAlreadyPaid($quote),
+            'transaction' => [
+                'model' => $this->giftcardResponse->getCreatedTransaction()
+            ],
+            'quote' =>  $quote
         ];
     }
     /**
-     * Get RemainderAmount
+     * Build giftcard request
      *
-     * @api
-     * @return float
-     */
-    protected function getRemainderAmount(Quote $quote)
-    {
-        return $quote->getGrandTotal() - $this->getAlreadyPaid($quote);
-    }
-    /**
-     * Get AlreadyPaid
+     * @param array $args
      *
-     * @api
-     * @return float
+     * @return GiftcardRequest
      */
-    protected function getAlreadyPaid(Quote $quote)
+    protected function build(Quote $quote, array $args)
     {
-        return $this->groupTransaction->getGroupTransactionAmount(
-            $quote->getReservedOrderId()
-        );
-    }
-    /**
-     * Get the list of transactions for this cart
-     *
-     * @param string $cartId
-     * @return array
-     */
-    protected function getTransactions(Quote $quote)
-    {
-        return $this->formatFound(
-            $this->groupTransaction->getActiveItemsWithName(
-                $quote->getReservedOrderId()
-            )
-        );
+        return $this->voucherRequest
+            ->setVoucherCode($args['input']['voucher_code'])
+            ->setQuote($quote);
     }
 
-    /**
-     * Format data for json response
-     *
-     * @param array $collection
-     *
-     * @return array
-     */
-    protected function formatFound(array $collection)
+    protected function argumentExists($args, $name)
     {
-        return array_map(function ($item) {
-            return [
-                'model' => $item
-            ];
-        }, $collection);
+        if (!isset($args['input'])) {
+            return false;
+        }
+        return isset($args['input'][$name]) &&
+            is_string($args['input'][$name]) &&
+            strlen(trim($args['input'][$name])) > 0;
     }
 }

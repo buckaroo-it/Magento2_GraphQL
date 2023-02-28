@@ -32,7 +32,10 @@ class Name extends Base implements ResolverInterface
 
     public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
-        return $this->getField('label', $value);
+        $name = $this->getField('label', $value);
+        if ($name === null) {
+            return __('Buckaroo Voucher');
+        }
+        return $name;
     }
-   
 }

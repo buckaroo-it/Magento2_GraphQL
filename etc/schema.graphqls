@@ -22,9 +22,13 @@ type Mutation {
         input: BuckarooReturnUrlInput!
     ): BuckarooReturnUrl @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\SetReturnUrl")
 
-   buckarooProcessGiftcardTransaction(
+    buckarooProcessGiftcardTransaction(
         input: BuckarooProcessGiftcardTransactionInput
-    ): BuckarooProcessGiftcardTransactionOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\GiftcardTransactionResolver") 
+    ): BuckarooProcessGiftcardTransactionOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\GiftcardTransactionResolver")
+
+    buckarooProcessVoucherTransaction(
+        input: BuckarooProcessVoucherTransactionInput
+    ): BuckarooProcessGiftcardTransactionOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\VoucherTransactionResolver") 
 }
 input BuckarooReturnUrlInput {
     return_url: String! @doc(description: "Link to the success/failed order page"),
@@ -33,6 +37,12 @@ input BuckarooReturnUrlInput {
 type BuckarooReturnUrl {
     success:Boolean
 }
+
+input BuckarooProcessVoucherTransactionInput {
+  cart_id: String! @doc(description: "Cart id")
+  voucher_code: String!  @doc(description: "Voucher code")
+}
+
 input BuckarooProcessGiftcardTransactionInput {
   cart_id: String! @doc(description: "Cart id")
   giftcard_id: String!  @doc(description: "Giftcard id")
@@ -113,10 +123,14 @@ input BuckarooAdditionalInput {
     buckaroo_magento2_paylink: BuckarooPayLinkInput
     buckaroo_magento2_payperemail: BuckarooPayPerEmailInput
     buckaroo_magento2_sepadirectdebit: BuckarooSepaDirectDebitInput
-    buckaroo_magento2_tinka: BuckarooTinkaInput
+    buckaroo_magento2_tinka: BuckarooTinkaInput,
+    buckaroo_magento2_klarna: BuckarooKlarnaInput,
+    buckaroo_magento2_klarnain: BuckarooKlarnaInput
 }
 
-
+input BuckarooKlarnaInput {
+    customer_gender:  String!  @doc(description: "Customer gender")
+}
 
 input BuckarooAfterpay {
     termsCondition: String!  @doc(description: "Customer is required to accept the terms and conditions")
