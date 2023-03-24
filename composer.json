@@ -1,18 +1,30 @@
 {
-    "name": "buckaroo/module-magento2graphql",
-    "description": "GraphQL Support",
+    "name": "buckaroo/magento2graphql",
+    "description": "Buckaroo Magento2 GraphQL Support",
     "type": "magento2-module",
-    "license": "proprietary",
+    "license": "CC-BY-NC-ND-3.0",
     "authors": [
+        {
+            "name": "Buckaroo",
+            "email": "support@buckaroo.nl",
+            "homepage": "https://www.buckaroo.nl"
+        },
         {
             "name": "Florinel Chis",
             "email": "florinel.chis@gmail.com"
         }
     ],
-    "version": "0.1",
-    "minimum-stability": "dev",
+    "support": {
+        "email": "support@buckaroo.nl",
+        "issues": "https://support.buckaroo.nl/contact",
+        "wiki": "https://support.buckaroo.nl",
+        "docs": "https://support.buckaroo.nl"
+    },
+    "homepage": "https://www.buckaroo.nl",
+    "version" : "1.0.0",
+    "minimum-stability": "stable",
     "require": {
-        "buckaroo/magento2": "~1.39"
+        "buckaroo/magento2": "~1.44"
     },
     "autoload": {
         "files": [
