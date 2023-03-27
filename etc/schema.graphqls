@@ -1,0 +1,285 @@
+#Queries
+
+type Query {
+    getBuckarooIdin (cart_id: String!): BuckarooIdin @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\IdinResolver")
+    @doc(description: "Get iDIN info for this session")
+
+    getBuckarooGiftcardTransactions (cart_id: String!): BuckarooGiftcardTransactions @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\GiftcardTransactionListResolver")
+    @doc(description: "Get giftcard transactions")
+}
+
+#Mutations
+
+type Mutation {
+    verifyBuckarooIdin (input: BuckarooIdinInput!): BuckarooIdinOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\IdinOutputResolver") 
+    @doc(description: "Verify customer/session age")
+
+    buckarooPaymentTransactionStatus(
+        input: BuckarooPaymentTransactionInput!
+    ): BuckarooPaymentTransactionOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\ProcessTransactionOutput") 
+
+    setBuckarooReturnUrl(
+        input: BuckarooReturnUrlInput!
+    ): BuckarooReturnUrl @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\SetReturnUrl")
+
+    buckarooProcessGiftcardTransaction(
+        input: BuckarooProcessGiftcardTransactionInput
+    ): BuckarooProcessGiftcardTransactionOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\GiftcardTransactionResolver")
+
+    buckarooProcessVoucherTransaction(
+        input: BuckarooProcessVoucherTransactionInput
+    ): BuckarooProcessGiftcardTransactionOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\VoucherTransactionResolver") 
+}
+input BuckarooReturnUrlInput {
+    return_url: String! @doc(description: "Link to the success/failed order page"),
+    cart_id: String! @doc(description: "Cart id")
+}
+type BuckarooReturnUrl {
+    success:Boolean
+}
+
+input BuckarooProcessVoucherTransactionInput {
+  cart_id: String! @doc(description: "Cart id")
+  voucher_code: String!  @doc(description: "Voucher code")
+}
+
+input BuckarooProcessGiftcardTransactionInput {
+  cart_id: String! @doc(description: "Cart id")
+  giftcard_id: String!  @doc(description: "Giftcard id")
+  card_number: String!  @doc(description: "Giftcard number")
+  card_pin: String!  @doc(description: "Giftcard pin")
+}
+
+type BuckarooGiftcardTransactions {
+    remainder_amount: Float!,
+    already_paid: Float!,
+    transactions: [GiftcardTransaction],
+    available_payment_methods:[GiftcardAvailableMethods]  @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Giftcard\\AvailablePaymentMethods") 
+}
+
+type BuckarooProcessGiftcardTransactionOutput {
+  remainder_amount: Float!,
+  already_paid: Float!,
+  transaction: GiftcardTransaction!,
+  available_payment_methods:[GiftcardAvailableMethods]  @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Giftcard\\AvailablePaymentMethods") 
+}
+
+type GiftcardAvailableMethods {
+    title: String!,
+    code: String!
+}
+type GiftcardTransaction {
+    amount: Float! @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Giftcard\\Amount")
+    currency: String! @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Giftcard\\Currency")
+    name: String! @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Giftcard\\Name")
+    transaction_id: String! @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Giftcard\\TransactionId")
+}
+
+
+input BuckarooPaymentTransactionInput {
+  transaction_id: String!  @doc(description: "Buckaroo transaction id")
+}
+
+type BuckarooPaymentTransactionOutput {
+  payment_status: String!,
+  status_code: Int!
+}
+
+# Overrides
+type AvailablePaymentMethod {
+    buckaroo_additional: [BuckarooAdditionalData]
+    @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\AdditionalData") 
+    @doc(description: "Additional buckaroo data for this payment method")
+}
+input PaymentMethodInput {
+     buckaroo_additional: BuckarooAdditionalInput
+}
+
+type Order {
+    buckaroo_additional: BuckarooOrderOutput 
+    @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\OrderOutput")
+}
+
+# Buckaroo
+#Payment input
+
+#Global
+
+input BuckarooAdditionalInput {
+    buckaroo_magento2_afterpay: BuckarooAfterpay
+    buckaroo_magento2_afterpay2: BuckarooAfterpay
+    buckaroo_magento2_afterpay20: BuckarooAfterpay20
+    buckaroo_magento2_applepay: BuckarooApplepayInput
+    buckaroo_magento2_billink: BuckarooBillinkInput
+    buckaroo_magento2_capayablein3: BuckarooIn3Input
+    buckaroo_magento2_creditcard: BuckarooCreditcardInput
+    buckaroo_magento2_creditcards: BuckarooCreditcardsInput
+    buckaroo_magento2_emandate: BuckarooEmandateInput
+    buckaroo_magento2_giftcards: BuckarooGiftcardsInput
+    buckaroo_magento2_giropay: BuckarooGiropayInput
+    buckaroo_magento2_ideal: BuckarooIdealInput
+    buckaroo_magento2_idealprocessing: BuckarooIdealInput
+    buckaroo_magento2_mrcash: BuckarooMrcashInput
+    buckaroo_magento2_paylink: BuckarooPayLinkInput
+    buckaroo_magento2_payperemail: BuckarooPayPerEmailInput
+    buckaroo_magento2_sepadirectdebit: BuckarooSepaDirectDebitInput
+    buckaroo_magento2_tinka: BuckarooTinkaInput,
+    buckaroo_magento2_klarna: BuckarooKlarnaInput,
+    buckaroo_magento2_klarnain: BuckarooKlarnaInput
+}
+
+input BuckarooKlarnaInput {
+    customer_gender:  String!  @doc(description: "Customer gender")
+}
+
+input BuckarooAfterpay {
+    termsCondition: String!  @doc(description: "Customer is required to accept the terms and conditions")
+    customer_billingName: String! @doc(description: "Customer billing name")
+    selectedBusiness: String! @doc(description: "Business methods that will be used 1 for B2C, 2 for B2B")
+    customer_iban: String! @doc(description: "Customer IBAN required for B2C (selectedBusiness = 1)")
+    customer_DoB: String! @doc(description: "Customer date of birth format `d/m/Y`")
+    customer_telephone: String @doc(description: "Customer phone number")
+    customer_identificationNumber: String @doc(description: "Customer identification number required if billing country is finland (FI).")
+    COCNumber: String @doc(description: "Customer COC number required for B2B (selectedBusiness = 2)")
+    CompanyName: String @doc(description: "Company name required for B2B (selectedBusiness = 2)")
+}
+
+input BuckarooAfterpay20 {
+    termsCondition: String!  @doc(description: "Customer is required to accept the terms and conditions")
+    customer_billingName: String! @doc(description: "Customer billing name")
+    customer_DoB: String! @doc(description: "Customer date of birth format `d/m/Y`")
+    customer_telephone: String @doc(description: "Customer phone number")
+    customer_identificationNumber: String @doc(description: "Customer identification number required if billing country is finland (FI).")
+    customer_coc: String @doc(description: "Customer COC number required for B2B")
+}
+#Applepay
+input BuckarooApplepayInput {
+    applepayTransaction: String @doc(description: "Transaction data received from Buckaroo JS SDK")
+    billingContact: String @doc(description: "Customer full name received from Buckaroo JS SDK")
+}
+
+#Billink
+input BuckarooBillinkInput {
+    customer_billingName: String! @doc(description: "Customer billing name")
+    customer_gender: String! @doc(description: "Customer gender 1 for 'male' 2 for 'female'")
+    customer_chamberOfCommerce: String @doc(description: "Customer Chamber of commerce number required for B2B")
+    customer_VATNumber: String @doc(description: "Customer VAT number required for B2B")
+    customer_DoB: String! @doc(description: "Customer date of birth format `d/m/Y`")
+    customer_telephone: String  @doc(description: "Customer phone number")
+    termsCondition: String!  @doc(description: "Customer is required to accept the terms and conditions")
+}
+
+
+input BuckarooIn3Input {
+    customer_billingName: String! @doc(description: "Customer billing name")
+    customer_DoB: String! @doc(description: "Customer date of birth format `d/m/Y`")
+}
+
+#Creditcard
+input BuckarooCreditcardInput {
+    card_type: String @doc(description: "Valid card type")
+}
+
+#Creditcards
+input BuckarooCreditcardsInput {
+    customer_encrypteddata: String! @doc(description: "Encrypted client data using the buckaroo JS SDK")
+    customer_creditcardcompany: String  @doc(description: "Valid card type")
+}
+
+#Emandate
+input BuckarooEmandateInput {
+    issuer: String! @doc(description: "Valid bank issuer")
+}
+
+#Giftcards
+input BuckarooGiftcardsInput {
+    giftcard_method: String!  @doc(description: "Valid giftcard method")
+}
+#Giropay
+input BuckarooGiropayInput {
+    customer_bic: String! @doc(description: "Customer BIC")
+}
+#Ideal
+input BuckarooIdealInput {
+    issuer: String! @doc(description: "Valid bank issuer")
+}
+#Mrcash
+input BuckarooMrcashInput {
+    client_side_mode: String! @doc(description: "Type of request `cc` for client side, `mobile` for mobile app/QR Code")
+    customer_encrypteddata: String @doc(description: "Encrypted client data using the buckaroo JS SDK")
+}
+
+#PayLink
+input BuckarooPayLinkInput {
+    customer_gender: String! @doc(description: "Customer gender 1 for 'male' 2 for 'female'")
+    customer_billingFirstName: String! @doc(description: "Customer first name")
+    customer_billingLastName: String! @doc(description: "Customer last name")
+    customer_email: String! @doc(description: "A valid customer email address")
+}
+
+#PayPerEmail
+input BuckarooPayPerEmailInput {
+    customer_gender: String! @doc(description: "Customer gender 1 for 'male' 2 for 'female'")
+    customer_billingFirstName: String! @doc(description: "Customer first name")
+    customer_billingLastName: String! @doc(description: "Customer last name")
+    customer_email: String! @doc(description: "A valid customer email address")
+}
+
+#SepaDirectDebit
+input BuckarooSepaDirectDebitInput {
+    customer_bic: String @doc(description: "Customer BIC")
+    customer_iban: String! @doc(description: "Customer BIC")
+    customer_account_name: String! @doc(description: "Customer account name")
+}
+
+#Tinka
+input BuckarooTinkaInput {
+    customer_billingName: String! @doc(description: "Customer first name")
+    customer_DoB: String! @doc(description: "Customer date of birth format `d/m/Y`")
+}
+
+#Order output
+type BuckarooOrderOutput {
+    redirect: String @doc(description: "Url required for completing the payment")
+    data: [BuckarooAdditionalOutputData] @doc(description: "Additional fields required for inline payments")
+    transaction_id: String @doc(description: "Buckaroo transaction id")
+}
+
+type BuckarooAdditionalOutputData {
+    key: String!
+    value: String!
+}
+
+#Method additional data
+type BuckarooAdditionalData {
+    key: String!
+    values: [BuckarooMultipleValues]  @doc(description: "Field values")
+    value: String  @doc(description: "Field value")
+}
+type BuckarooMultipleValues {
+    name: String!
+    code: String!
+    img: String
+}
+
+#idin
+
+type BuckarooIdin {
+    issuers: [BuckarooIdinIssuers]! @doc(description: "List of issuers available for iDIN verification")
+    active: Boolean! @doc(description: "iDIN is active or not")
+    verified: Boolean! @doc(description: "Age is verified for this customer/session")
+
+}
+type BuckarooIdinIssuers {
+    name: String! @doc(description: "Issuer name")
+    code: String! @doc(description: "Issuer code required for age verification")
+}
+
+
+input BuckarooIdinInput {
+    issuer: String! @doc(description: "Issuer code required for age verification")
+}
+
+type BuckarooIdinOutput {
+    redirect: String! @doc(description: "Url required for completion of age verification")
+}
