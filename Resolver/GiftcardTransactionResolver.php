@@ -94,8 +94,11 @@ class GiftcardTransactionResolver extends AbstractCartResolver
             $this->logger->addDebug((string)$e);
             throw $e;
         } catch (ApiException $e) {
-            $this->logger->addDebug((string)$e);
-            throw $e;
+            $this->logger->addDebug($e->getMessage());
+            throw new GraphQlInputException(
+                __($e->getMessage()),
+                $e
+            );
         } catch (\Throwable $th) {
             $this->logger->addDebug((string)$th);
             throw new GraphQlInputException(
