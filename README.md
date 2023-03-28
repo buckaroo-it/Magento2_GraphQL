@@ -24,10 +24,10 @@ To use the plugin you must use:
 - Buckaroo Magento 2 Payment module 1.43.0 or higher.
 
 ## Installation
-  - Install the module composer by running `composer require buckaroo/module-magento2graphql`
-  - Enable the module by running `php bin/magento module:enable Buckaroo_Magento2Graphql`
-  - Apply database updates by running `php bin/magento setup:upgrade`
-  - Flush the cache by running `php bin/magento cache:flush`
+  - Install the module composer by running the following command: `composer require buckaroo/module-magento2graphql`
+  - Enable the module by running the following command: `php bin/magento module:enable Buckaroo_Magento2Graphql`
+  - Apply database updates by running the following command: `php bin/magento setup:upgrade`
+  - Flush the cache by running the following command: `php bin/magento cache:flush`
 
 ## Usage
 
@@ -55,7 +55,7 @@ query {
 ```
 
 - Place order request example: In order to place a order you will need to the following 3 steps:
-  - Set the payment method on the card with the required additional parameters using the default `setPaymentMethodOnCart` and the `buckaroo_additional` property
+  - Set the payment method on the cart with the required additional parameters using the default `setPaymentMethodOnCart` and the `buckaroo_additional` property
   - Set the return url using our custom migration `setBuckarooReturnUrl` required in order for the payment engine to redirect back to your application after the payment was completed/canceled/failed
   - Finally execute the the default `placeOrder` that will return a redirect url for the payment engine to complete the payment
 
@@ -105,6 +105,8 @@ For iDEAL we have the following example:
 ```
 After this migration is performed you will need to store the buckaroo `transaction_id` and redirect the user to complete the payment
 
+### Retrieve the payment status
+
 In order to get the payment status after the user is redirected back we will use our custom migration `buckarooPaymentTransactionStatus` that will need the stored `transaction_id`
 
 ```graphql
@@ -113,6 +115,7 @@ mutation buckarooPaymentTransactionStatus(input: { transaction_id: "E397CF4C24E6
   status_code
 }
 ```
+
 ### Additional information
 - **Support:** https://support.buckaroo.eu/contact
 - **Contact:** [support@buckaroo.nl](mailto:support@buckaroo.nl) or [+31 (0)30 711 50 50](tel:+310307115050)
