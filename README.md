@@ -124,6 +124,10 @@ mutation buckarooPaymentTransactionStatus(input: { transaction_id: "E397CF4C24E6
 We really appreciate it when developers contribute to improve the Buckaroo plugins.
 If you want to contribute as well, then please follow our [Contribution Guidelines](CONTRIBUTING.md).
 
+### Community is the ❤️ of open source
+Developing beautiful products is not possible without the input of a community. We thank everyone who actively contributes to this.
+
+
 ### Versioning 
 <p align="left">
   <img src="https://www.buckaroo.nl/media/3651/graphql_versioning.png" width="500px" position="center">
