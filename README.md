@@ -24,7 +24,7 @@ To use the plugin you must use:
 - Buckaroo Magento 2 Payment module 1.43.0 or higher.
 
 ## Installation
-  - Install the module composer by running the following command: `composer require buckaroo/module-magento2graphql`
+  - Install the module composer by running the following command: `composer require buckaroo/magento2graphql`
   - Enable the module by running the following command: `php bin/magento module:enable Buckaroo_Magento2Graphql`
   - Apply database updates by running the following command: `php bin/magento setup:upgrade`
   - Flush the cache by running the following command: `php bin/magento cache:flush`
