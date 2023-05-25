@@ -86,10 +86,9 @@ class VoucherTransactionResolver extends AbstractCartResolver
             $this->logger->addDebug((string)$e);
             throw $e;
         } catch (ApiException $e) {
-            $this->logger->addDebug($e->getMessage());
+            $this->logger->addDebug((string)$e);
             throw new GraphQlInputException(
-                __($e->getMessage()),
-                $e
+                __($e->getMessage())
             );
         } catch (\Throwable $th) {
             $this->logger->addDebug((string)$th);
