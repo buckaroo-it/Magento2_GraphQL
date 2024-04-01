@@ -21,22 +21,21 @@
 
 namespace Buckaroo\Magento2Graphql\Model\Payment\Method;
 
-use Buckaroo\Magento2\Model\ConfigProvider\Method\Factory;
-use Buckaroo\Magento2Graphql\Model\Payment\Method\ConfigFactoryException;
+use Buckaroo\Magento2\Model\ConfigProvider\Factory;
 
 class ConfigFactory
 {
     /**
      *
-     * @var Buckaroo\Magento2\Model\ConfigProvider\Method\Factory
+     * @var \Buckaroo\Magento2\Model\ConfigProvider\Factory
      */
-    protected $configProviderMethodFactory;
+    protected Factory $configProviderMethodFactory;
 
     /**
      *
      * @var array
      */
-    protected $configProviders;
+    protected array $configProviders;
 
     public function __construct(array $configProviders, Factory $configProviderMethodFactory)
     {

@@ -21,45 +21,53 @@
 
 namespace Buckaroo\Magento2Graphql\Resolver;
 
+use Buckaroo\Magento2\Logging\BuckarooLoggerInterface;
 use Buckaroo\Magento2\Logging\Log;
-use Buckaroo\Magento2\Gateway\GatewayInterface;
+use Buckaroo\Transaction\Response\TransactionResponse;
 use Magento\Framework\GraphQl\Config\Element\Field;
+use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use Buckaroo\Magento2\Gateway\Http\TransactionBuilderFactory;
-use Magento\Framework\GraphQl\Exception\GraphQlInputException;
+use Magento\Payment\Gateway\Http\ClientInterface;
+use Magento\Payment\Gateway\Http\TransferFactoryInterface;
+use Magento\Payment\Gateway\Request\BuilderInterface;
 
 class IdinOutputResolver implements ResolverInterface
 {
     /**
-     * @var Buckaroo\Magento2\Gateway\Http\TransactionBuilder\IdinBuilderInterface
+     * @var BuilderInterface
      */
-    protected $transactionBuilder;
-
+    protected BuilderInterface $requestDataBuilder;
     /**
-     * @var \Buckaroo\Magento2\Gateway\GatewayInterface
+     * @var TransferFactoryInterface
      */
-    protected $gateway;
-
+    protected TransferFactoryInterface $transferFactory;
     /**
-     * @var Log
+     * @var ClientInterface
      */
-    private $logger;
+    protected ClientInterface $clientInterface;
+    /**
+     * @var BuckarooLoggerInterface
+     */
+    private BuckarooLoggerInterface $logger;
 
     /**
      *
-     * @param \Buckaroo\Magento2\Gateway\Http\TransactionBuilderFactory $transactionBuilderFactory
-     * @param \Buckaroo\Magento2\Gateway\GatewayInterface $gateway
+     * @param BuilderInterface $requestDataBuilder
+     * @param TransferFactoryInterface $transferFactory
+     * @param ClientInterface $clientInterface
      * @param Log $logger
      */
     public function __construct(
-        TransactionBuilderFactory $transactionBuilderFactory,
-        GatewayInterface $gateway,
-        Log $logger
+        BuilderInterface $requestDataBuilder,
+        TransferFactoryInterface $transferFactory,
+        ClientInterface $clientInterface,
+        BuckarooLoggerInterface $logger
     ) {
-        $this->transactionBuilder = $transactionBuilderFactory->get('idin');
-        $this->gateway            = $gateway;
-        $this->logger             = $logger;
+        $this->logger = $logger;
+        $this->requestDataBuilder = $requestDataBuilder;
+        $this->transferFactory = $transferFactory;
+        $this->clientInterface = $clientInterface;
     }
 
     public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
@@ -72,38 +80,48 @@ class IdinOutputResolver implements ResolverInterface
         try {
             $response = $this->sendIdinRequest($args['input']['issuer']);
         } catch (\Throwable $th) {
-            $this->logger->addDebug((string)$th);
+            $this->logger->addError(sprintf(
+                '[iDIN] | [GraphQL] | [%s:%s] - Validate iDIN | [ERROR]: %s',
+                __METHOD__,
+                __LINE__,
+                $th->getMessage()
+            ));
             throw new GraphQlInputException(
                 __('Unknown buckaroo error occurred')
             );
         }
 
-        if (isset($response->RequiredAction) && isset($response->RequiredAction->RedirectURL)) {
-            return ['redirect' => $response->RequiredAction->RedirectURL];
+        if ($response->hasRedirect()) {
+            return ['redirect' => $response->getRedirectUrl()];
         } else {
             throw new GraphQlInputException(
                 __('Unfortunately iDIN not verified!')
             );
         }
     }
+
     /**
-     * Send idin request
+     * Send iDIN request
      *
      * @param string $issuer
      *
-     * @return mixed $response
-     * @throws \Exception
+     * @return TransactionResponse $response
+     * @throws GraphQlInputException
      */
-    protected function sendIdinRequest($issuer)
+    protected function sendIdinRequest(string $issuer): TransactionResponse
     {
-        $transaction = $this->transactionBuilder
-            ->setIssuer($issuer)
-            ->build();
+        $transferO = $this->transferFactory->create(
+            $this->requestDataBuilder->build(['issuer' => $issuer])
+        );
 
-        return $this->gateway
-            ->setMode(
-                $this->transactionBuilder->getMode()
-            )
-            ->authorize($transaction)[0];
+        $response = $this->clientInterface->placeRequest($transferO);
+
+        if (isset($response["object"]) && $response["object"] instanceof TransactionResponse) {
+            return $response["object"];
+        } else {
+            throw new GraphQlInputException(
+                __('TransactionResponse is not valid')
+            );
+        }
     }
 }

@@ -41,4 +41,12 @@
     <type name="Magento\QuoteGraphQl\Model\Cart\Payment\AdditionalDataProviderPool">
         <plugin name="buckaroo_graphql_data_provider_pool" type="Buckaroo\Magento2Graphql\Plugin\AdditionalDataProviderPool" />
     </type>
+    <!-- iDIN service (Age verification) -->
+    <type name="Buckaroo\Magento2Graphql\Resolver\IdinOutputResolver">
+        <arguments>
+            <argument name="requestDataBuilder" xsi:type="object">IdinVerifyRequest</argument>
+            <argument name="transferFactory" xsi:type="object">Buckaroo\Magento2\Gateway\Http\SDKTransferFactory</argument>
+            <argument name="clientInterface" xsi:type="object">TransactionVerify</argument>
+        </arguments>
+    </type>
 </config>
