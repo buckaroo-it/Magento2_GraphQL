@@ -25,14 +25,20 @@ use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
 class Giftcards extends AbstractConfig
 {
     /**
+     *
+     * @var \Buckaroo\Magento2\Model\ConfigProvider\Method\Giftcards
+     */
+    protected $configProvider;
+
+    /**
      * @inheritDoc
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         return [
             [
                 "key"=>"groupGiftcards",
-                "value" => $this->getConfigValue('groupGiftcards')
+                "value" => $this->configProvider->getGroupGiftcards()
             ],
             [
                 "key"=>"availableGiftcards",
@@ -41,11 +47,8 @@ class Giftcards extends AbstractConfig
             
         ];
     }
-    protected function getConfigValue($key)
-    {
-       return $this->configProvider->getConfig()['payment']['buckaroo'][$key];
-    }
-    public function getAvailableGiftcards()
+
+    public function getAvailableGiftcards(): array
     {
         return array_map(
             function($giftcard) {
@@ -53,7 +56,7 @@ class Giftcards extends AbstractConfig
                 $giftcard['img'] = $giftcard['logo'] != false ? $giftcard['logo'] : null;
                 return $giftcard;
             },
-            $this->getConfigValue('avaibleGiftcards')
+            $this->configProvider->getAvailableGiftcards()
         );
     }
 }

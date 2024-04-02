@@ -34,7 +34,6 @@
                 <item name="buckaroo_magento2_ideal" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Ideal</item>
                 <item name="buckaroo_magento2_idealprocessing" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\IdealProcessing</item>
                 <item name="buckaroo_magento2_mrcash" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Mrcash</item>
-                <item name="buckaroo_magento2_emandate" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Emandate</item>
             </argument>
         </arguments>
     </type>

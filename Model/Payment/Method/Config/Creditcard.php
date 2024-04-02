@@ -25,27 +25,29 @@ use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
 class Creditcard extends AbstractConfig
 {
     /**
+     *
+     * @var \Buckaroo\Magento2\Model\ConfigProvider\Method\Creditcard
+     */
+    protected $configProvider;
+
+    /**
      * @inheritDoc
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         return [
             [
                 "key"=>"cards",
-                "values" => $this->getConfigValue('cards')
+                "values" => $this->configProvider->formatIssuers()
             ],
             [
                 "key"=>"selectionType",
-                "value" => $this->getConfigValue('selectionType')
+                "value" => $this->configProvider->getSelectionType()
             ],
             [
                 "key"=>"paymentFlow",
-                "value" => $this->getConfigValue('paymentFlow')
+                "value" => $this->configProvider->getPaymentFlow()
             ]
         ];
-    }
-    protected function getConfigValue($key)
-    {
-       return $this->configProvider->getConfig()['payment']['buckaroo']['creditcard'][$key];
     }
 }

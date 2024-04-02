@@ -114,7 +114,6 @@ input BuckarooAdditionalInput {
     buckaroo_magento2_capayablein3: BuckarooIn3Input
     buckaroo_magento2_creditcard: BuckarooCreditcardInput
     buckaroo_magento2_creditcards: BuckarooCreditcardsInput
-    buckaroo_magento2_emandate: BuckarooEmandateInput
     buckaroo_magento2_giftcards: BuckarooGiftcardsInput
     buckaroo_magento2_giropay: BuckarooGiropayInput
     buckaroo_magento2_ideal: BuckarooIdealInput
@@ -184,11 +183,6 @@ input BuckarooCreditcardInput {
 input BuckarooCreditcardsInput {
     customer_encrypteddata: String! @doc(description: "Encrypted client data using the buckaroo JS SDK")
     customer_creditcardcompany: String  @doc(description: "Valid card type")
-}
-
-#Emandate
-input BuckarooEmandateInput {
-    issuer: String! @doc(description: "Valid bank issuer")
 }
 
 #Giftcards

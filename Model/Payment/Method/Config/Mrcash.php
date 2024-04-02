@@ -26,6 +26,12 @@ use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
 class Mrcash extends AbstractConfig
 {
     /**
+     *
+     * @var \Buckaroo\Magento2\Model\ConfigProvider\Method\Mrcash
+     */
+    protected $configProvider;
+
+    /**
      * @inheritDoc
      */
     public function getConfig()
@@ -33,12 +39,8 @@ class Mrcash extends AbstractConfig
         return [
             [
                 "key" => "useClientSide",
-                "value" => $this->getConfigValue('useClientSide')
+                "value" => (int)$this->configProvider->useClientSide()
             ]
         ];
-    }
-    protected function getConfigValue($key)
-    {
-        return $this->configProvider->getConfig()['payment']['buckaroo']['mrcash'][$key];
     }
 }

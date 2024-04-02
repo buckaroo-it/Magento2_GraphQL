@@ -25,6 +25,12 @@ use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
 class Billink extends AbstractConfig
 {
     /**
+     *
+     * @var \Buckaroo\Magento2\Model\ConfigProvider\Method\Billink
+     */
+    protected $configProvider;
+
+    /**
      * @inheritDoc
      */
     public function getConfig()
@@ -32,7 +38,7 @@ class Billink extends AbstractConfig
         return [
             [
                 "key"=>"b2b",
-                "value" => (int)$this->configProvider->getConfig()['payment']['buckaroo']['billink']['b2b']
+                "value" => (int)$this->configProvider->isB2B()
             ],
         ];
     }

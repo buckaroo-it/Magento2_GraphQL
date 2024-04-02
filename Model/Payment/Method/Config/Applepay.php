@@ -26,38 +26,44 @@ use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
 class Applepay extends AbstractConfig
 {
     /**
+     *
+     * @var \Buckaroo\Magento2\Model\ConfigProvider\Method\Applepay
+     */
+    protected $configProvider;
+
+    /**
      * @inheritDoc
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         return [
             [
                 "key" => "storeName",
-                "value" => $this->getConfigValue('storeName')
+                "value" => $this->configProvider->getStoreName()
             ],
             [
                 "key" => "currency",
-                "value" => $this->getConfigValue('currency')
+                "value" => $this->configProvider->getStoreCurrency()
             ],
             [
                 "key" => "cultureCode",
-                "value" => $this->getConfigValue('cultureCode')
+                "value" => $this->configProvider->getCultureCode()
             ],
             [
                 "key" => "country",
-                "value" => $this->getConfigValue('country')
+                "value" => $this->configProvider->getDefaultCountry()
             ],
             [
                 "key" => "guid",
-                "value" => $this->getConfigValue('guid')
+                "value" => $this->configProvider->getMerchantGuid()
             ],
             [
                 "key" => "buttonStyle",
-                "value" => $this->getConfigValue('buttonStyle')
+                "value" => $this->configProvider->getButtonStyle()
             ],
             [
                 "key" => "dontAskBillingInfoInCheckout",
-                "value" => $this->getConfigValue('dontAskBillingInfoInCheckout')
+                "value" => (int)$this->configProvider->getDontAskBillingInfoInCheckout()
             ],
             [
                 "key" => "availableButtons",
@@ -67,20 +73,15 @@ class Applepay extends AbstractConfig
         ];
     }
 
-    protected function getConfigValue($key)
-    {
-        return $this->configProvider->getConfig()['payment']['buckaroo']['applepay'][$key];
-    }
-
     /**
      * Get list of available buttons
      *
      * @return string
      */
-    protected function getAvailableButtons()
+    protected function getAvailableButtons(): string
     {
         $result = '';
-        $availableButtons = $this->getConfigValue('availableButtons');
+        $availableButtons = $this->configProvider->getAvailableButtons();
         if (is_countable($availableButtons) && count($availableButtons)) {
             $result = implode(",", $availableButtons);
         }

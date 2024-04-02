@@ -75,7 +75,6 @@ class AvailablePaymentMethods implements ResolverInterface
             'buckaroo_magento2_transfer',
             'buckaroo_magento2_klarnakp',
             'buckaroo_magento2_klarnain',
-            'buckaroo_magento2_emandate',
             'buckaroo_magento2_applepay',
             'buckaroo_magento2_capayablein3',
             'buckaroo_magento2_capayablepostpay',
