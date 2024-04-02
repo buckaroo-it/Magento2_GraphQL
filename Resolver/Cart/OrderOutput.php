@@ -2,6 +2,8 @@
 
 namespace Buckaroo\Magento2Graphql\Resolver\Cart;
 
+use Buckaroo\Magento2\Api\Data\BuckarooResponseDataInterface;
+use Buckaroo\Magento2\Model\Giftcard\Api\TransactionResponse;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
@@ -12,10 +14,19 @@ use \Magento\Framework\Registry;
  */
 class OrderOutput implements ResolverInterface
 {
+    /**
+     * @var BuckarooResponseDataInterface
+     */
+    private BuckarooResponseDataInterface $buckarooResponseData;
 
-    public function __construct(Registry $registry)
+    /**
+     * @var TransactionResponse|null
+     */
+    private ?TransactionResponse $buckarooResponse;
+
+    public function __construct(BuckarooResponseDataInterface $buckarooResponseData)
     {
-        $this->registry = $registry;
+        $this->buckarooResponseData = $buckarooResponseData;
     }
 
     public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
@@ -34,12 +45,9 @@ class OrderOutput implements ResolverInterface
      */
     protected function getTransactionId()
     {
-        $response = $this->getResponse();
-
-        if (isset($response->Key) && !empty($response->Key)) {
-            return $response->Key;
-        }
+        return $this->getResponse()->getTransactionKey();
     }
+
     /**
      * Get redirect url
      *
@@ -47,10 +55,11 @@ class OrderOutput implements ResolverInterface
      */
     protected function getRedirect()
     {
-        $response = $this->getResponse();
-        if ($response !== null && !empty($response->RequiredAction->RedirectURL)) {
-            return $response->RequiredAction->RedirectURL;
+        if($this->getResponse()->hasRedirect()) {
+            return $this->getResponse()->getRedirectUrl();
         }
+
+        return null;
     }
     /**
      * Get additional data from response
@@ -59,17 +68,7 @@ class OrderOutput implements ResolverInterface
      */
     protected function getAdditionalOutputData()
     {
-
-        $response = $this->getResponse();
-        if (
-            $response !== null &&
-            isset($response->Services) &&
-            isset($response->Services->Service) &&
-            is_array($response->Services->Service->ResponseParameter) &&
-            count($response->Services->Service->ResponseParameter)
-        ) {
-            return $this->formatAdditionalOutput($response->Services->Service->ResponseParameter);
-        }
+        return $this->formatAdditionalOutput($this->getResponse()->getAdditionalParameters());
     }
     /**
      * Format data in the graphQl format
@@ -82,13 +81,12 @@ class OrderOutput implements ResolverInterface
     {
         $additionalData = [];
         if (count($data)) {
-            foreach ($data as $item) {
-                if (isset($item->Name) && isset($item->_)) {
-                    $additionalData[] = [
-                        "key" => $item->Name,
-                        "value" => $item->_
-                    ];
-                }
+            foreach ($data as $key => $value) {
+                $additionalData[] = [
+                    "key"   => $key,
+                    "value" => $value
+                ];
+
             }
         }
         return $additionalData;
@@ -96,12 +94,13 @@ class OrderOutput implements ResolverInterface
     /**
      * Get payment response
      *
-     * @return stdClass|null
+     * @return \Buckaroo\Transaction\Response\TransactionResponse|void
      */
     private function getResponse()
     {
-        if ($this->registry && $this->registry->registry("buckaroo_response")) {
-            return $this->registry->registry("buckaroo_response")[0];
+        if (!$this->buckarooResponse) {
+            $this->buckarooResponse = $this->buckarooResponseData->getResponse();
         }
+        return $this->buckarooResponse;
     }
 }
