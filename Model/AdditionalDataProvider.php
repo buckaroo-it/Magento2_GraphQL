@@ -30,7 +30,7 @@ class AdditionalDataProvider implements AdditionalDataProviderInterface
     const PAYMENT_FROM = 'buckaroo_payment_from';
     /**
      *
-     * @var Buckaroo\Magento2Graphql\Model\Payment\Method\ConfigFactory
+     * @var ConfigFactory
      */
     protected $fieldListFactory;
 

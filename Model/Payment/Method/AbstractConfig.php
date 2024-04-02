@@ -26,7 +26,7 @@ abstract class AbstractConfig
 {
     /**
      *
-     * @var Buckaroo\Magento2\Model\ConfigProvider\Method\ConfigProviderInterface
+     * @var ConfigProviderInterface
      */
     protected $configProvider;
 

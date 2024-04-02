@@ -18,7 +18,7 @@ class AdditionalData implements ResolverInterface
 {
     /**
      *
-     * @var Buckaroo\Magento2Graphql\Model\Payment\Method\ConfigFactory
+     * @var ConfigFactory
      */
     protected $fieldListFactory;
 
