@@ -3,11 +3,10 @@
 namespace Buckaroo\Magento2Graphql\Resolver\Cart;
 
 use Buckaroo\Magento2\Api\Data\BuckarooResponseDataInterface;
-use Buckaroo\Magento2\Model\Giftcard\Api\TransactionResponse;
+use Buckaroo\Transaction\Response\TransactionResponse;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use \Magento\Framework\Registry;
 
 /**
  * Order output class
@@ -22,7 +21,7 @@ class OrderOutput implements ResolverInterface
     /**
      * @var TransactionResponse|null
      */
-    private ?TransactionResponse $buckarooResponse;
+    private ?TransactionResponse $buckarooResponse = null;
 
     public function __construct(BuckarooResponseDataInterface $buckarooResponseData)
     {
@@ -32,20 +31,10 @@ class OrderOutput implements ResolverInterface
     public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
         return [
-            "redirect" => $this->getRedirect(),
-            "data" => $this->getAdditionalOutputData(),
+            "redirect"       => $this->getRedirect(),
+            "data"           => $this->getAdditionalOutputData(),
             "transaction_id" => $this->getTransactionId()
         ];
-    }
-
-    /**
-     * Get it for transaction
-     *
-     * @return string|null
-     */
-    protected function getTransactionId()
-    {
-        return $this->getResponse()->getTransactionKey();
     }
 
     /**
@@ -55,12 +44,26 @@ class OrderOutput implements ResolverInterface
      */
     protected function getRedirect()
     {
-        if($this->getResponse()->hasRedirect()) {
+        if ($this->getResponse()->hasRedirect()) {
             return $this->getResponse()->getRedirectUrl();
         }
 
         return null;
     }
+
+    /**
+     * Get payment response
+     *
+     * @return \Buckaroo\Transaction\Response\TransactionResponse|void
+     */
+    private function getResponse()
+    {
+        if (!$this->buckarooResponse) {
+            $this->buckarooResponse = $this->buckarooResponseData->getResponse();
+        }
+        return $this->buckarooResponse;
+    }
+
     /**
      * Get additional data from response
      *
@@ -70,6 +73,7 @@ class OrderOutput implements ResolverInterface
     {
         return $this->formatAdditionalOutput($this->getResponse()->getAdditionalParameters());
     }
+
     /**
      * Format data in the graphQl format
      *
@@ -91,16 +95,14 @@ class OrderOutput implements ResolverInterface
         }
         return $additionalData;
     }
+
     /**
-     * Get payment response
+     * Get it for transaction
      *
-     * @return \Buckaroo\Transaction\Response\TransactionResponse|void
+     * @return string|null
      */
-    private function getResponse()
+    protected function getTransactionId()
     {
-        if (!$this->buckarooResponse) {
-            $this->buckarooResponse = $this->buckarooResponseData->getResponse();
-        }
-        return $this->buckarooResponse;
+        return $this->getResponse()->getTransactionKey();
     }
 }
