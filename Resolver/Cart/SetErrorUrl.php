@@ -28,10 +28,10 @@ use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Buckaroo\Magento2Graphql\Resolver\AbstractCartResolver;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 
-class SetReturnUrl extends AbstractCartResolver
+class SetErrorUrl extends AbstractCartResolver
 {
 
-    public const ADDITIONAL_RETURN_URL = 'buckaroo_return_url';
+    public const ADDITIONAL_ERROR_URL = 'buckaroo_error_url';
     /**
      * @var GetCartForUser
      */
@@ -56,26 +56,26 @@ class SetReturnUrl extends AbstractCartResolver
 
         parent::resolve($field, $context, $info, $value, $args);
 
-        if (empty($args['input']['return_url'])) {
+        if (empty($args['input']['error_url'])) {
             throw new GraphQlInputException(
-                __('Required parameter "return_url" is missing')
+                __('Required parameter "error_url" is missing')
             );
         }
 
-        $returnUrl = $args['input']['return_url'];
+        $errorUrl = $args['input']['error_url'];
         $cartId = $args['input']['cart_id'];
         if (
-            filter_var($returnUrl, FILTER_VALIDATE_URL) === false ||
-            !in_array(parse_url($returnUrl, PHP_URL_SCHEME), ['http', 'https'])
+            filter_var($errorUrl, FILTER_VALIDATE_URL) === false ||
+            !in_array(parse_url($errorUrl, PHP_URL_SCHEME), ['http', 'https'])
         ) {
             throw new GraphQlInputException(
-                __('A valid "return_url" is required ')
+                __('A valid "error_url" is required ')
             );
         }
 
         try {
             $quote = $this->getQuote($cartId, $context);
-            $quote->getPayment()->setAdditionalInformation(self::ADDITIONAL_RETURN_URL, "{$returnUrl}/{$cartId}");
+            $quote->getPayment()->setAdditionalInformation(self::ADDITIONAL_ERROR_URL, "{$errorUrl}/{$cartId}");
         } catch (\Throwable $th) {
             $this->logger->addDebug((string)$th);
             throw new GraphQlInputException(

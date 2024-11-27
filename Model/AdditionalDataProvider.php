@@ -21,6 +21,7 @@
 
 namespace Buckaroo\Magento2Graphql\Model;
 
+use Buckaroo\Magento2\Gateway\Http\TransactionBuilder\AbstractTransactionBuilder;
 use Buckaroo\Magento2Graphql\Plugin\AdditionalDataProviderPool;
 use Buckaroo\Magento2Graphql\Model\Payment\Method\ConfigFactory;
 use Magento\QuoteGraphQl\Model\Cart\Payment\AdditionalDataProviderInterface;
@@ -58,5 +59,29 @@ class AdditionalDataProvider implements AdditionalDataProviderInterface
         }
         
         return $args;
+    }
+
+    /**
+     * @param AdditionalDataProvider $subject
+     * @param array                  $result
+     * @param array                  $args
+     * @return array
+     * @suppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function afterGetData(AdditionalDataProvider $subject, array $result, array $args): array
+    {
+        if (isset($args['buckaroo_additional']['return_url'])) {
+            $result[AbstractTransactionBuilder::ADDITIONAL_RETURN_URL] = $args['buckaroo_additional']['return_url'];
+        }
+        if (isset($args['buckaroo_additional']['cancel_url'])) {
+            $result[AbstractTransactionBuilder::ADDITIONAL_CANCEL_URL] = $args['buckaroo_additional']['cancel_url'];
+        }
+        if (isset($args['buckaroo_additional']['error_url'])) {
+            $result[AbstractTransactionBuilder::ADDITIONAL_ERROR_URL] = $args['buckaroo_additional']['error_url'];
+        }
+        if (isset($args['buckaroo_additional']['reject_url'])) {
+            $result[AbstractTransactionBuilder::ADDITIONAL_REJECT_URL] = $args['buckaroo_additional']['reject_url'];
+        }
+        return $result;
     }
 }
