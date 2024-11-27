@@ -27,6 +27,9 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Framework\Stdlib\Cookie\PhpCookieManager">
+        <plugin name="fixSession" type="Buckaroo\Magento2Graphql\Plugin\FixSession" sortOrder="10" disabled="false" />
+    </type>
     <type name="Buckaroo\Magento2\Model\Method\AbstractMethod">
         <plugin sortOrder="1" name="buckaroo.return_url"
                 type="Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractMethodPlugin"/>
