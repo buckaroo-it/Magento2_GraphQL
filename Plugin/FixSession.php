@@ -17,7 +17,6 @@
  * @copyright Copyright (c) Buckaroo B.V.
  * @license   https://tldrlegal.com/license/mit-license
  */
-
 namespace Buckaroo\Magento2Graphql\Plugin;
 
 use Magento\Framework\HTTP\Header;
@@ -41,23 +40,21 @@ class FixSession
     protected $sessionManager;
 
     public function __construct(
-        Header         $header,
-        Log            $logger,
+        Header $header,
+        Log $logger,
         SessionManager $sessionManager
-    )
-    {
+    ) {
         $this->header = $header;
         $this->logger = $logger;
         $this->sessionManager = $sessionManager;
     }
 
     public function beforeSetPublicCookie(
-        PhpCookieManager     $subject,
-                             $name,
-                             $value,
+        PhpCookieManager $subject,
+                         $name,
+                         $value,
         PublicCookieMetadata $metadata = null
-    )
-    {
+    ) {
         if ($metadata && method_exists($metadata, 'getSameSite') && ($name == $this->sessionManager->getName())) {
             if ($metadata->getSameSite() != 'None') {
                 $metadata->setSecure(true);
