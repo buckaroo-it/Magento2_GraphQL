@@ -119,21 +119,21 @@ status_code
 - Get the available payments methods with additional data for gateways:
 ```graphql
 query {
-  cart(cart_id: "{ CART_ID }") {
-    available_payment_methods {
-      code
-      title
-      buckaroo_additional {
-        key
-        values {
-          name
-          code
-          img
+    cart(cart_id: "{ CART_ID }") {
+        available_payment_methods {
+            code
+            title
+            buckaroo_additional {
+                key
+                values {
+                    name
+                    code
+                    img
+                }
+                value
+            }
         }
-        value
-      }
     }
-  }
 }
 ```
 
@@ -192,8 +192,8 @@ In order to get the payment status after the user is redirected back we will use
 
 ```graphql
 mutation buckarooPaymentTransactionStatus(input: { transaction_id: "E397CF4C24E64AA299F45246F9906F45" }) {
-payment_status,
-status_code
+  payment_status,
+  status_code
 }
 ```
 ### Additional information
@@ -201,7 +201,7 @@ status_code
 - **Contact:** [support@buckaroo.nl](mailto:support@buckaroo.nl) or [+31 (0)30 711 50 50](tel:+310307115050)
 
 ### Contribute
-We really appreciate it when developers contribute to improve the Buckaroo plugins.
+We really appreciate it when ers contribute to improve the Buckaroo plugins.
 If you want to contribute as well, then please follow our [Contribution Guidelines](CONTRIBUTING.md).
 
 > ### Community is the :green_heart: of open source
@@ -209,7 +209,8 @@ If you want to contribute as well, then please follow our [Contribution Guidelin
 >
 > [![florinel-chis's avatar](https://github.com/florinel-chis.png?size=50)](https://github.com/florinel-chis) [![peterkoppenaal's avatar](https://github.com/peterkoppenaal.png?size=50)](https://github.com/peterkoppenaal) [![serpentscode's avatar](https://github.com/serpentscode.png?size=50)](https://github.com/serpentscode) [![paales's avatar](https://github.com/paales.png?size=50)](https://github.com/paales) [![raoulguillermo's avatar](https://github.com/raoulguillermo.png?size=50)](https://github.com/raoulguillermo)
 
-### Versioning
+### Versioning 
+
 <p align="left">
   <img src="https://www.buckaroo.nl/media/3651/graphql_versioning.png" width="500px" position="center">
 </p>

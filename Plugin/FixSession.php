@@ -51,8 +51,8 @@ class FixSession
 
     public function beforeSetPublicCookie(
         PhpCookieManager $subject,
-                         $name,
-                         $value,
+        $name,
+        $value,
         PublicCookieMetadata $metadata = null
     ) {
         if ($metadata && method_exists($metadata, 'getSameSite') && ($name == $this->sessionManager->getName())) {
