@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://www.buckaroo.nl/media/3652/magento2_graphqls_icon.png" width="200px" position="center">
+  <img src="https://www.buckaroo.nl/media/w0sdhkjd/magento2_graphql_icon.png" width="200px" position="center">
 </p>
 
 # Buckaroo Magento2 GraphQL extension
