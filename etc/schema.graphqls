@@ -22,6 +22,18 @@ type Mutation {
         input: BuckarooReturnUrlInput!
     ): BuckarooReturnUrl @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\SetReturnUrl")
 
+    setBuckarooCancelUrl(
+        input: BuckarooCancelUrlInput!
+    ): BuckarooCancelUrl @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\SetCancelUrl")
+
+    setBuckarooErrorUrl(
+        input: BuckarooErrorUrlInput!
+    ): BuckarooErrorUrl @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\SetErrorUrl")
+
+    setBuckarooRejectUrl(
+        input: BuckarooRejectUrlInput!
+    ): BuckarooRejectUrl @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\SetRejectUrl")
+
     buckarooProcessGiftcardTransaction(
         input: BuckarooProcessGiftcardTransactionInput
     ): BuckarooProcessGiftcardTransactionOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\GiftcardTransactionResolver")
@@ -31,10 +43,34 @@ type Mutation {
     ): BuckarooProcessGiftcardTransactionOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\VoucherTransactionResolver") 
 }
 input BuckarooReturnUrlInput {
-    return_url: String! @doc(description: "Link to the success/failed order page"),
+    return_url: String! @doc(description: "Link to the success order page"),
     cart_id: String! @doc(description: "Cart id")
 }
 type BuckarooReturnUrl {
+    success:Boolean
+}
+
+input BuckarooCancelUrlInput {
+    cancel_url: String! @doc(description: "Link to the page after a cancellation"),
+    cart_id: String! @doc(description: "Cart id")
+}
+type BuckarooCancelUrl {
+    success:Boolean
+}
+
+input BuckarooErrorUrlInput {
+    error_url: String! @doc(description: "Link to the page when an error occurs"),
+    cart_id: String! @doc(description: "Cart id")
+}
+type BuckarooErrorUrl {
+    success:Boolean
+}
+
+input BuckarooRejectUrlInput {
+    reject_url: String! @doc(description: "Link to the page when the transaction gets rejected"),
+    cart_id: String! @doc(description: "Cart id")
+}
+type BuckarooRejectUrl {
     success:Boolean
 }
 
@@ -125,7 +161,11 @@ input BuckarooAdditionalInput {
     buckaroo_magento2_sepadirectdebit: BuckarooSepaDirectDebitInput
     buckaroo_magento2_tinka: BuckarooTinkaInput,
     buckaroo_magento2_klarna: BuckarooKlarnaInput,
-    buckaroo_magento2_klarnain: BuckarooKlarnaInput
+    buckaroo_magento2_klarnain: BuckarooKlarnaInput,
+    return_url: String @doc(description: "The URL to which the customer will be redirected after the payment has been completed. without query params")
+    cancel_url: String @doc(description: "The URL to which the customer will be redirected after the payment has been cancelled. without query params"),
+    error_url: String @doc(description: "The URL to which the customer will be redirected after the payment failed with due to an error. without query params"),
+    reject_url: String @doc(description: "The URL to which the customer will be redirected after the payment has been rejected. without query params"),
 }
 
 input BuckarooKlarnaInput {

@@ -19,15 +19,15 @@ This plugin is needed for our [Hÿva React checkout extension](https://github.co
 
 
 ### Requirements
-To use the plugin you must use: 
+To use the plugin you must use:
 - Magento Open Source version 2.4.x
 - Buckaroo Magento 2 Payment module 1.43.0 or higher.
 
 ## Installation
-  - Install the module composer by running the following command: `composer require buckaroo/magento2graphql`
-  - Enable the module by running the following command: `php bin/magento module:enable Buckaroo_Magento2Graphql`
-  - Apply database updates by running the following command: `php bin/magento setup:upgrade`
-  - Flush the cache by running the following command: `php bin/magento cache:flush`
+- Install the module composer by running the following command: `composer require buckaroo/magento2graphql`
+- Enable the module by running the following command: `php bin/magento module:enable Buckaroo_Magento2Graphql`
+- Apply database updates by running the following command: `php bin/magento setup:upgrade`
+- Flush the cache by running the following command: `php bin/magento cache:flush`
 
 ## Usage
 
@@ -36,21 +36,21 @@ To use the plugin you must use:
 - Get the available payments methods with additional data for gateways:
 ```graphql
 query {
-    cart(cart_id: "{ CART_ID }") {
-        available_payment_methods {
-            code
-            title
-            buckaroo_additional {
-                key
-                values {
-                    name
-                    code
-                    img
-                }
-                value
-            }
+  cart(cart_id: "{ CART_ID }") {
+    available_payment_methods {
+      code
+      title
+      buckaroo_additional {
+        key
+        values {
+          name
+          code
+          img
         }
+        value
+      }
     }
+  }
 }
 ```
 
@@ -111,8 +111,8 @@ In order to get the payment status after the user is redirected back we will use
 
 ```graphql
 mutation buckarooPaymentTransactionStatus(input: { transaction_id: "E397CF4C24E64AA299F45246F9906F45" }) {
-  payment_status,
-  status_code
+payment_status,
+status_code
 }
 ```
 
@@ -201,15 +201,16 @@ mutation buckarooPaymentTransactionStatus(input: { transaction_id: "E397CF4C24E6
 - **Contact:** [support@buckaroo.nl](mailto:support@buckaroo.nl) or [+31 (0)30 711 50 50](tel:+310307115050)
 
 ### Contribute
-We really appreciate it when developers contribute to improve the Buckaroo plugins.
+We really appreciate it when ers contribute to improve the Buckaroo plugins.
 If you want to contribute as well, then please follow our [Contribution Guidelines](CONTRIBUTING.md).
 
 > ### Community is the :green_heart: of open source
 > Developing beautiful products is not possible without the input of a community. We thank everyone who actively contributes to this.
-> 
+>
 > [![florinel-chis's avatar](https://github.com/florinel-chis.png?size=50)](https://github.com/florinel-chis) [![peterkoppenaal's avatar](https://github.com/peterkoppenaal.png?size=50)](https://github.com/peterkoppenaal) [![serpentscode's avatar](https://github.com/serpentscode.png?size=50)](https://github.com/serpentscode) [![paales's avatar](https://github.com/paales.png?size=50)](https://github.com/paales) [![raoulguillermo's avatar](https://github.com/raoulguillermo.png?size=50)](https://github.com/raoulguillermo)
 
 ### Versioning 
+
 <p align="left">
   <img src="https://www.buckaroo.nl/media/3651/graphql_versioning.png" width="500px" position="center">
 </p>

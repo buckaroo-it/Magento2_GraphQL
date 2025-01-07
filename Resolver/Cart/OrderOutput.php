@@ -12,6 +12,7 @@ use \Magento\Framework\Registry;
  */
 class OrderOutput implements ResolverInterface
 {
+    protected Registry $registry;
 
     public function __construct(Registry $registry)
     {

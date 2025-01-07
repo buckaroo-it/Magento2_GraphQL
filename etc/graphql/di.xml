@@ -30,4 +30,16 @@
     <type name="Magento\Framework\Stdlib\Cookie\PhpCookieManager">
         <plugin name="fixSession" type="Buckaroo\Magento2Graphql\Plugin\FixSession" sortOrder="10" disabled="false" />
     </type>
+    <type name="Buckaroo\Magento2\Model\Method\AbstractMethod">
+        <plugin sortOrder="1" name="buckaroo.return_url"
+                type="Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractMethodPlugin"/>
+    </type>
+    <type name="Buckaroo\Magento2\Gateway\Http\TransactionBuilder\Order">
+        <plugin sortOrder="1" name="BuckarooAbstractTransactionBuilder"
+                type="Buckaroo\Magento2Graphql\Plugin\OrderTransactionBuilderPlugin"/>
+    </type>
+    <type name="Buckaroo\Magento2Graphql\Model\AdditionalDataProvider">
+        <plugin sortOrder="1" name="BuckarooAdditionalDataProvider"
+                type="Buckaroo\Magento2Graphql\Model\AdditionalDataProvider"/>
+    </type>
 </config>
