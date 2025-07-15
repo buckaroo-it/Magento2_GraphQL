@@ -1,5 +1,4 @@
 <?php
-
 /**
  * NOTICE OF LICENSE
  *
@@ -18,18 +17,14 @@
  * @copyright Copyright (c) Buckaroo B.V.
  * @license   https://tldrlegal.com/license/mit-license
  */
-
-namespace Buckaroo\Magento2Graphql\Model\Payment\Method\Config;
-
-use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
-
-class IdealProcessing extends Ideal
-{
+if (strpos(__DIR__, 'app/code') !== false) {
     /**
-     * @inheritDoc
+     * From app/code/Buckaroo/Magento2
      */
-    public function getConfig()
-    {
-        return [];
-    }
-}
+    require_once(__DIR__ . '/../../../../../dev/tests/unit/framework/bootstrap.php');
+} else {
+    /**
+     * From vendor/buckaroo/magento2
+     */
+    require_once(__DIR__ . '/../../../../../dev/tests/unit/framework/bootstrap.php');
+} 

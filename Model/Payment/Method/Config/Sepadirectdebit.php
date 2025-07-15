@@ -23,13 +23,31 @@ namespace Buckaroo\Magento2Graphql\Model\Payment\Method\Config;
 
 use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
 
-class IdealProcessing extends Ideal
+class Sepadirectdebit extends AbstractConfig
 {
     /**
      * @inheritDoc
      */
     public function getConfig()
     {
-        return [];
+        return [
+            [
+                "key" => "customer_iban",
+                "required" => true
+            ],
+            [
+                "key" => "customer_bic", 
+                "required" => false
+            ],
+            [
+                "key" => "customer_account_name",
+                "required" => true
+            ]
+        ];
     }
-}
+
+    protected function getConfigValue($key)
+    {
+        return $this->configProvider->getConfig()['payment']['buckaroo']['sepadirectdebit'][$key] ?? null;
+    }
+} 

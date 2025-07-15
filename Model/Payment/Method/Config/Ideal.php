@@ -30,19 +30,6 @@ class Ideal extends AbstractConfig
      */
     public function getConfig()
     {
-        return [
-            [
-                "key" => "selectionType",
-                "value" => $this->getConfigValue('selectionType')
-            ],
-            [
-                "key" => "banks",
-                "values" => $this->getConfigValue('banks')
-            ]
-        ];
-    }
-    protected function getConfigValue($key)
-    {
-        return $this->configProvider->getConfig()['payment']['buckaroo']['ideal'][$key];
+        return [];
     }
 }
