@@ -14,8 +14,6 @@ declare(strict_types=1);
 
 namespace Buckaroo\Magento2Graphql\Test\Integration\GraphQl;
 
-// Removed Magento test framework dependency
-
 class BuckarooPaymentMethodsTest extends GraphQLTestCase
 {
     /**

@@ -25,6 +25,12 @@ use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
 class Billink extends AbstractConfig
 {
     /**
+     *
+     * @var \Buckaroo\Magento2\Model\ConfigProvider\Method\Billink
+     */
+    protected $configProvider;
+
+    /**
      * @inheritDoc
      */
     public function getConfig()

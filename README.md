@@ -15,6 +15,7 @@ This plugin is needed for our [Hÿva React checkout extension](https://github.co
 - [Additional information](#additional-information)
 - [Contribute](#contribute)
 - [Versioning](#versioning)
+- [Additional information](#additional-information)
 ---
 
 

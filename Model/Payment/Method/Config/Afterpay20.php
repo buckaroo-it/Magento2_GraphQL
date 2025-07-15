@@ -26,6 +26,12 @@ use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
 class Afterpay20 extends AbstractConfig
 {
     /**
+     *
+     * @var \Buckaroo\Magento2\Model\ConfigProvider\Method\Afterpay20
+     */
+    protected $configProvider;
+
+    /**
      * @inheritDoc
      */
     public function getConfig()

@@ -7,6 +7,12 @@ use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
 class PayByBank extends AbstractConfig
 {
     /**
+     *
+     * @var \Buckaroo\Magento2\Model\ConfigProvider\Method\PayByBank
+     */
+    protected $configProvider;
+
+    /**
      * @inheritdoc
      */
     public function getConfig(): array
@@ -48,4 +54,4 @@ class PayByBank extends AbstractConfig
     {
         return $this->configProvider->getPaymentFlow();
     }
-} 
+}

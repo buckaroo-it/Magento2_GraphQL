@@ -26,6 +26,12 @@ use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
 class Emandate extends AbstractConfig
 {
     /**
+     *
+     * @var \Buckaroo\Magento2\Model\ConfigProvider\Method\Creditcards
+     */
+    protected $configProvider;
+
+    /**
      * @inheritDoc
      */
     public function getConfig()

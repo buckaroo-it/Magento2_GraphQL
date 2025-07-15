@@ -26,6 +26,12 @@ use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
 class Sepadirectdebit extends AbstractConfig
 {
     /**
+     *
+     * @var \Buckaroo\Magento2\Model\ConfigProvider\Method\Sepadirectdebit
+     */
+    protected $configProvider;
+
+    /**
      * @inheritDoc
      */
     public function getConfig()
@@ -36,7 +42,7 @@ class Sepadirectdebit extends AbstractConfig
                 "required" => true
             ],
             [
-                "key" => "customer_bic", 
+                "key" => "customer_bic",
                 "required" => false
             ],
             [
@@ -50,4 +56,4 @@ class Sepadirectdebit extends AbstractConfig
     {
         return $this->configProvider->getConfig()['payment']['buckaroo']['sepadirectdebit'][$key] ?? null;
     }
-} 
+}

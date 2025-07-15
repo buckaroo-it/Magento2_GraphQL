@@ -27,4 +27,7 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Framework\Stdlib\Cookie\PhpCookieManager">
+        <plugin name="fixSession" type="Buckaroo\Magento2Graphql\Plugin\FixSession" sortOrder="10" disabled="false" />
+    </type>
 </config>
