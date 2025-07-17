@@ -26,25 +26,10 @@ use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
 class Ideal extends AbstractConfig
 {
     /**
-     *
-     * @var \Buckaroo\Magento2\Model\ConfigProvider\Method\Ideal
-     */
-    protected $configProvider;
-
-    /**
      * @inheritDoc
      */
     public function getConfig(): array
     {
-        return [
-            [
-                "key" => "selectionType",
-                "value" => $this->configProvider->getSelectionType()
-            ],
-            [
-                "key" => "banks",
-                "values" => $this->configProvider->formatIssuers()
-            ]
-        ];
+        return [];
     }
 }

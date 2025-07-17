@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  *
@@ -20,14 +21,13 @@
 
 namespace Buckaroo\Magento2Graphql\Model\Payment\Method\Config;
 
-use Buckaroo\Magento2\Model\Config\Source\AfterpayCustomerType;
 use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
 
-class Afterpay20 extends AbstractConfig
+class Sepadirectdebit extends AbstractConfig
 {
     /**
      *
-     * @var \Buckaroo\Magento2\Model\ConfigProvider\Method\Afterpay20
+     * @var \Buckaroo\Magento2\Model\ConfigProvider\Method\Sepadirectdebit
      */
     protected $configProvider;
 
@@ -38,9 +38,22 @@ class Afterpay20 extends AbstractConfig
     {
         return [
             [
-                "key"=>"is_b2b",
-                "value" => $this->configProvider->getCustomerType() !== AfterpayCustomerType::CUSTOMER_TYPE_B2C
+                "key" => "customer_iban",
+                "required" => true
+            ],
+            [
+                "key" => "customer_bic",
+                "required" => false
+            ],
+            [
+                "key" => "customer_account_name",
+                "required" => true
             ]
         ];
+    }
+
+    protected function getConfigValue($key)
+    {
+        return $this->configProvider->getConfig()['payment']['buckaroo']['sepadirectdebit'][$key] ?? null;
     }
 }

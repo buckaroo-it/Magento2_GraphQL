@@ -44,7 +44,7 @@ class Giftcards extends AbstractConfig
                 "key"=>"availableGiftcards",
                 "values" => $this->getAvailableGiftcards()
             ],
-            
+
         ];
     }
 

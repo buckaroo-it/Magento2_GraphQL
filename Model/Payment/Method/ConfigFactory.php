@@ -27,7 +27,7 @@ class ConfigFactory
 {
     /**
      *
-     * @var \Buckaroo\Magento2\Model\ConfigProvider\Factory
+     * @var Factory
      */
     protected Factory $configProviderMethodFactory;
 

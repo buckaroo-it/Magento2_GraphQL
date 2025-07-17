@@ -17,30 +17,14 @@
  * @copyright Copyright (c) Buckaroo B.V.
  * @license   https://tldrlegal.com/license/mit-license
  */
-
-namespace Buckaroo\Magento2Graphql\Model\Payment\Method\Config;
-
-use Buckaroo\Magento2\Model\Config\Source\AfterpayCustomerType;
-use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
-
-class Afterpay20 extends AbstractConfig
-{
+if (strpos(__DIR__, 'app/code') !== false) {
     /**
-     *
-     * @var \Buckaroo\Magento2\Model\ConfigProvider\Method\Afterpay20
+     * From app/code/Buckaroo/Magento2
      */
-    protected $configProvider;
-
+    require_once(__DIR__ . '/../../../../../dev/tests/unit/framework/bootstrap.php');
+} else {
     /**
-     * @inheritDoc
+     * From vendor/buckaroo/magento2
      */
-    public function getConfig()
-    {
-        return [
-            [
-                "key"=>"is_b2b",
-                "value" => $this->configProvider->getCustomerType() !== AfterpayCustomerType::CUSTOMER_TYPE_B2C
-            ]
-        ];
-    }
-}
+    require_once(__DIR__ . '/../../../../../dev/tests/unit/framework/bootstrap.php');
+} 

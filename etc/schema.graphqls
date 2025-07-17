@@ -11,12 +11,12 @@ type Query {
 #Mutations
 
 type Mutation {
-    verifyBuckarooIdin (input: BuckarooIdinInput!): BuckarooIdinOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\IdinOutputResolver") 
+    verifyBuckarooIdin (input: BuckarooIdinInput!): BuckarooIdinOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\IdinOutputResolver")
     @doc(description: "Verify customer/session age")
 
     buckarooPaymentTransactionStatus(
         input: BuckarooPaymentTransactionInput!
-    ): BuckarooPaymentTransactionOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\ProcessTransactionOutput") 
+    ): BuckarooPaymentTransactionOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\ProcessTransactionOutput")
 
     setBuckarooReturnUrl(
         input: BuckarooReturnUrlInput!
@@ -28,7 +28,7 @@ type Mutation {
 
     buckarooProcessVoucherTransaction(
         input: BuckarooProcessVoucherTransactionInput
-    ): BuckarooProcessGiftcardTransactionOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\VoucherTransactionResolver") 
+    ): BuckarooProcessGiftcardTransactionOutput @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\VoucherTransactionResolver")
 }
 input BuckarooReturnUrlInput {
     return_url: String! @doc(description: "Link to the success/failed order page"),
@@ -54,14 +54,14 @@ type BuckarooGiftcardTransactions {
     remainder_amount: Float!,
     already_paid: Float!,
     transactions: [GiftcardTransaction],
-    available_payment_methods:[GiftcardAvailableMethods]  @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Giftcard\\AvailablePaymentMethods") 
+    available_payment_methods:[GiftcardAvailableMethods]  @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Giftcard\\AvailablePaymentMethods")
 }
 
 type BuckarooProcessGiftcardTransactionOutput {
   remainder_amount: Float!,
   already_paid: Float!,
   transaction: GiftcardTransaction!,
-  available_payment_methods:[GiftcardAvailableMethods]  @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Giftcard\\AvailablePaymentMethods") 
+  available_payment_methods:[GiftcardAvailableMethods]  @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Giftcard\\AvailablePaymentMethods")
 }
 
 type GiftcardAvailableMethods {
@@ -88,7 +88,7 @@ type BuckarooPaymentTransactionOutput {
 # Overrides
 type AvailablePaymentMethod {
     buckaroo_additional: [BuckarooAdditionalData]
-    @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\AdditionalData") 
+    @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\AdditionalData")
     @doc(description: "Additional buckaroo data for this payment method")
 }
 input PaymentMethodInput {
@@ -96,7 +96,7 @@ input PaymentMethodInput {
 }
 
 type Order {
-    buckaroo_additional: BuckarooOrderOutput 
+    buckaroo_additional: BuckarooOrderOutput
     @resolver(class: "Buckaroo\\Magento2Graphql\\Resolver\\Cart\\OrderOutput")
 }
 
@@ -109,22 +109,38 @@ input BuckarooAdditionalInput {
     buckaroo_magento2_afterpay: BuckarooAfterpay
     buckaroo_magento2_afterpay2: BuckarooAfterpay
     buckaroo_magento2_afterpay20: BuckarooAfterpay20
+    buckaroo_magento2_alipay: BuckarooAlipayInput
     buckaroo_magento2_applepay: BuckarooApplepayInput
+    buckaroo_magento2_belfius: BuckarooBelfiusInput
     buckaroo_magento2_billink: BuckarooBillinkInput
+    buckaroo_magento2_blik: BuckarooBlikInput
     buckaroo_magento2_capayablein3: BuckarooIn3Input
     buckaroo_magento2_creditcard: BuckarooCreditcardInput
     buckaroo_magento2_creditcards: BuckarooCreditcardsInput
+    buckaroo_magento2_eps: BuckarooEpsInput
     buckaroo_magento2_giftcards: BuckarooGiftcardsInput
-    buckaroo_magento2_giropay: BuckarooGiropayInput
     buckaroo_magento2_ideal: BuckarooIdealInput
     buckaroo_magento2_idealprocessing: BuckarooIdealInput
+    buckaroo_magento2_kbc: BuckarooKbcInput
+    buckaroo_magento2_klarna: BuckarooKlarnaInput
+    buckaroo_magento2_klarnain: BuckarooKlarnaInput
+    buckaroo_magento2_klarnakp: BuckarooKlarnaKpInput
+    buckaroo_magento2_knaken: BuckarooKnakenInput
+    buckaroo_magento2_mbway: BuckarooMbwayInput
     buckaroo_magento2_mrcash: BuckarooMrcashInput
+    buckaroo_magento2_multibanco: BuckarooMultibancoInput
+    buckaroo_magento2_p24: BuckarooP24Input
+    buckaroo_magento2_paybybank: BuckarooPayByBankInput
+    buckaroo_magento2_payconiq: BuckarooPayconiqInput
+    buckaroo_magento2_paypal: BuckarooPaypalInput
     buckaroo_magento2_paylink: BuckarooPayLinkInput
     buckaroo_magento2_payperemail: BuckarooPayPerEmailInput
+    buckaroo_magento2_pospayment: BuckarooPosPaymentInput
     buckaroo_magento2_sepadirectdebit: BuckarooSepaDirectDebitInput
-    buckaroo_magento2_tinka: BuckarooTinkaInput,
-    buckaroo_magento2_klarna: BuckarooKlarnaInput,
-    buckaroo_magento2_klarnain: BuckarooKlarnaInput
+    buckaroo_magento2_transfer: BuckarooTransferInput
+    buckaroo_magento2_trustly: BuckarooTrustlyInput
+    buckaroo_magento2_voucher: BuckarooVoucherInput
+    buckaroo_magento2_wechatpay: BuckarooWeChatPayInput
 }
 
 input BuckarooKlarnaInput {
@@ -157,6 +173,11 @@ input BuckarooApplepayInput {
     billingContact: String @doc(description: "Customer full name received from Buckaroo JS SDK")
 }
 
+#Belfius
+input BuckarooBelfiusInput {
+    issuer: String @doc(description: "Customer bank issuer")
+}
+
 #Billink
 input BuckarooBillinkInput {
     customer_billingName: String! @doc(description: "Customer billing name")
@@ -185,22 +206,64 @@ input BuckarooCreditcardsInput {
     customer_creditcardcompany: String  @doc(description: "Valid card type")
 }
 
+#Eps
+input BuckarooEpsInput {
+    issuer: String! @doc(description: "Valid bank issuer")
+}
+
 #Giftcards
 input BuckarooGiftcardsInput {
     giftcard_method: String!  @doc(description: "Valid giftcard method")
-}
-#Giropay
-input BuckarooGiropayInput {
-    customer_bic: String! @doc(description: "Customer BIC")
 }
 #Ideal
 input BuckarooIdealInput {
     issuer: String! @doc(description: "Valid bank issuer")
 }
+
+#Kbc
+input BuckarooKbcInput {
+    issuer: String! @doc(description: "Valid bank issuer")
+}
+
+#Klarnakp
+input BuckarooKlarnaKpInput {
+    customer_gender:  String!  @doc(description: "Customer gender")
+}
+
+#Knaken
+input BuckarooKnakenInput {
+    issuer: String! @doc(description: "Valid crypto currency")
+}
+
+#Mbway
+input BuckarooMbwayInput {
+    customer_telephone: String! @doc(description: "Customer phone number")
+}
+
 #Mrcash
 input BuckarooMrcashInput {
     client_side_mode: String! @doc(description: "Type of request `cc` for client side, `mobile` for mobile app/QR Code")
     customer_encrypteddata: String @doc(description: "Encrypted client data using the buckaroo JS SDK")
+}
+
+#Multibanco
+input BuckarooMultibancoInput {
+    customer_billingName: String! @doc(description: "Customer billing name")
+}
+
+#Paybybank
+input BuckarooPayByBankInput {
+    issuer: String! @doc(description: "Valid bank issuer")
+}
+
+#Payconiq
+input BuckarooPayconiqInput {
+    customer_encrypteddata: String @doc(description: "Encrypted client data using the buckaroo JS SDK")
+}
+
+#Paypal
+input BuckarooPaypalInput {
+    customer_billingName: String! @doc(description: "Customer billing name")
 }
 
 #PayLink
@@ -219,6 +282,16 @@ input BuckarooPayPerEmailInput {
     customer_email: String! @doc(description: "A valid customer email address")
 }
 
+#P24
+input BuckarooP24Input {
+    customer_email: String! @doc(description: "A valid customer email address")
+}
+
+#PosPayment
+input BuckarooPosPaymentInput {
+    terminal_id: String! @doc(description: "Terminal id")
+}
+
 #SepaDirectDebit
 input BuckarooSepaDirectDebitInput {
     customer_bic: String @doc(description: "Customer BIC")
@@ -226,10 +299,37 @@ input BuckarooSepaDirectDebitInput {
     customer_account_name: String! @doc(description: "Customer account name")
 }
 
-#Tinka
-input BuckarooTinkaInput {
-    customer_billingName: String! @doc(description: "Customer first name")
-    customer_DoB: String! @doc(description: "Customer date of birth format `d/m/Y`")
+#Transfer
+input BuckarooTransferInput {
+    customer_gender: String! @doc(description: "Customer gender 1 for 'male' 2 for 'female'")
+    customer_billingFirstName: String! @doc(description: "Customer first name")
+    customer_billingLastName: String! @doc(description: "Customer last name")
+    customer_email: String! @doc(description: "A valid customer email address")
+}
+
+#Trustly
+input BuckarooTrustlyInput {
+    customer_country: String! @doc(description: "Customer country")
+}
+
+#Voucher
+input BuckarooVoucherInput {
+    voucher_code: String! @doc(description: "Voucher code")
+}
+
+#WeChatPay
+input BuckarooWeChatPayInput {
+    customer_billingName: String! @doc(description: "Customer billing name")
+}
+
+#Alipay
+input BuckarooAlipayInput {
+    customer_billingName: String! @doc(description: "Customer billing name")
+}
+
+#Blik
+input BuckarooBlikInput {
+    customer_email: String! @doc(description: "A valid customer email address")
 }
 
 #Order output

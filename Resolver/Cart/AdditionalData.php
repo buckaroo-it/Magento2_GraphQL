@@ -10,7 +10,7 @@ use Buckaroo\Magento2Graphql\Model\Payment\Method\ConfigFactory;
 use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
 
 /**
- * 
+ *
  * methods that end up here were already validated (via ::isAvailable)
  * we can use the model to retrive additional data
  */

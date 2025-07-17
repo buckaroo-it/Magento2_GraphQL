@@ -26,14 +26,34 @@
                 <item name="buckaroo_magento2_afterpay" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Afterpay</item>
                 <item name="buckaroo_magento2_afterpay2" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Afterpay2</item>
                 <item name="buckaroo_magento2_afterpay20" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Afterpay20</item>
+                <item name="buckaroo_magento2_alipay" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Alipay</item>
                 <item name="buckaroo_magento2_applepay" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Applepay</item>
+                <item name="buckaroo_magento2_belfius" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Belfius</item>
                 <item name="buckaroo_magento2_billink" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Billink</item>
+                <item name="buckaroo_magento2_blik" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Blik</item>
                 <item name="buckaroo_magento2_creditcard" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Creditcard</item>
                 <item name="buckaroo_magento2_creditcards" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Creditcards</item>
+                <item name="buckaroo_magento2_emandate" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Emandate</item>
+                <item name="buckaroo_magento2_eps" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Eps</item>
                 <item name="buckaroo_magento2_giftcards" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Giftcards</item>
                 <item name="buckaroo_magento2_ideal" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Ideal</item>
                 <item name="buckaroo_magento2_idealprocessing" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\IdealProcessing</item>
+                <item name="buckaroo_magento2_kbc" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Kbc</item>
+                <item name="buckaroo_magento2_klarnakp" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Klarnakp</item>
+                <item name="buckaroo_magento2_knaken" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Knaken</item>
+                <item name="buckaroo_magento2_mbway" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\MBWay</item>
                 <item name="buckaroo_magento2_mrcash" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Mrcash</item>
+                <item name="buckaroo_magento2_multibanco" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Multibanco</item>
+                <item name="buckaroo_magento2_p24" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\P24</item>
+                <item name="buckaroo_magento2_paybybank" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\PayByBank</item>
+                <item name="buckaroo_magento2_payconiq" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Payconiq</item>
+                <item name="buckaroo_magento2_paypal" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Paypal</item>
+                <item name="buckaroo_magento2_pospayment" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Pospayment</item>
+                <item name="buckaroo_magento2_sepadirectdebit" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Sepadirectdebit</item>
+                <item name="buckaroo_magento2_transfer" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Transfer</item>
+                <item name="buckaroo_magento2_trustly" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Trustly</item>
+                <item name="buckaroo_magento2_voucher" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Voucher</item>
+                <item name="buckaroo_magento2_wechatpay" xsi:type="string">Buckaroo\Magento2Graphql\Model\Payment\Method\Config\Wechatpay</item>
             </argument>
         </arguments>
     </type>
@@ -47,5 +67,8 @@
             <argument name="transferFactory" xsi:type="object">Buckaroo\Magento2\Gateway\Http\SDKTransferFactory</argument>
             <argument name="clientInterface" xsi:type="object">TransactionVerify</argument>
         </arguments>
+    </type>
+    <type name="Buckaroo\Magento2\Gateway\Http\TransactionBuilder\Order">
+        <plugin name="buckaroo_graphql_push_url_modifier" type="Buckaroo\Magento2Graphql\Plugin\TransactionBuilder\PushUrlModifier" />
     </type>
 </config>

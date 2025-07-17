@@ -56,7 +56,7 @@ class AdditionalDataProvider implements AdditionalDataProviderInterface
 
             return array_merge($args, $additionalArgs);
         }
-        
+
         return $args;
     }
 }
