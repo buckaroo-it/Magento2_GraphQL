@@ -81,8 +81,8 @@ input BuckarooPaymentTransactionInput {
 }
 
 type BuckarooPaymentTransactionOutput {
-  payment_status: String!,
-  status_code: Int!
+  payment_status: String!
+  status_code: String!
 }
 
 # Overrides

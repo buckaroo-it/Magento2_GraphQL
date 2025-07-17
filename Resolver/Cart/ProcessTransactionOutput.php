@@ -21,6 +21,8 @@
 
 namespace Buckaroo\Magento2Graphql\Resolver\Cart;
 
+use Buckaroo\Magento2\Api\Data\TransactionStatusResponseInterface;
+use Buckaroo\Magento2\Helper\Data;
 use Buckaroo\Magento2\Logging\Log;
 use Magento\Framework\Encryption\Encryptor;
 use Buckaroo\Magento2\Gateway\Http\Client\Json;
@@ -28,11 +30,12 @@ use Buckaroo\Magento2\Model\ConfigProvider\Account;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use Buckaroo\Magento2\Api\TransactionResponseInterfaceFactory;
+use Buckaroo\Magento2\Api\Data\TransactionStatusResponseInterfaceFactory;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Buckaroo\Magento2\Model\Transaction\Status\ProcessResponse;
 use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
+use Magento\Sales\Model\Order;
 use Magento\Sales\Model\ResourceModel\Order\Payment\Transaction\Collection as TransactionCollection;
 
 /**
@@ -48,38 +51,38 @@ class ProcessTransactionOutput implements ResolverInterface
 
 
     /**
-     * @var \Buckaroo\Magento2\Model\Transaction\Status\ProcessResponse
+     * @var ProcessResponse
      */
     protected $processResponse;
 
     /**
-     * @var \Buckaroo\Magento2\Gateway\Http\Client\Json
+     * @var Json
      */
     protected $client;
 
     /**
-     * @var \Buckaroo\Magento2\Api\TransactionResponseInterfaceFactory
+     * @var TransactionStatusResponseInterfaceFactory
      */
-    protected $transactionResponseInterfaceFactory;
+    protected $transactionStatusResponseInterfaceFactory;
 
     /**
-     * @var \Buckaroo\Magento2\Model\ConfigProvider\Account
+     * @var Account
      */
     protected $accountConfig;
 
     /**
-     * @var \Magento\Sales\Model\ResourceModel\Order\Payment\Transaction\Collection
+     * @var TransactionCollection
      */
     protected $transactionCollection;
 
     /**
-     * @var \Magento\Framework\Encryption\Encryptor
+     * @var Encryptor
      */
     protected $encryptor;
 
     public function __construct(
         ProcessResponse $processResponse,
-        TransactionResponseInterfaceFactory $transactionResponseInterfaceFactory,
+        TransactionStatusResponseInterfaceFactory $transactionStatusResponseInterfaceFactory,
         Json $client,
         Log $logger,
         Account $accountConfig,
@@ -89,7 +92,7 @@ class ProcessTransactionOutput implements ResolverInterface
         $this->logger = $logger;
         $this->processResponse = $processResponse;
         $this->client = $client;
-        $this->transactionResponseInterfaceFactory = $transactionResponseInterfaceFactory;
+        $this->transactionStatusResponseInterfaceFactory = $transactionStatusResponseInterfaceFactory;
         $this->accountConfig = $accountConfig;
         $this->transactionCollection = $transactionCollection;
         $this->encryptor = $encryptor;
@@ -145,11 +148,10 @@ class ProcessTransactionOutput implements ResolverInterface
      *
      * @param string $transaction_id
      *
-     * @return \Magento\Sales\Model\Order
+     * @return Order
      */
     protected function getOrder(string $transaction_id)
     {
-        /** @var \Magento\Sales\Model\Order\Payment\Transaction */
         $transaction = $this->transactionCollection
             ->addFieldToFilter(
                 'txn_id',
@@ -167,13 +169,14 @@ class ProcessTransactionOutput implements ResolverInterface
      *
      * @param string $transaction_id
      *
-     * @return \Buckaroo\Magento2\Api\TransactionResponseInterface
+     * @return TransactionStatusResponseInterface
+     * @throws GraphQlNoSuchEntityException
      */
     protected function doRequest(string $transaction_id)
     {
         $active = $this->accountConfig->getActive();
-        $mode = ($active == \Buckaroo\Magento2\Helper\Data::MODE_LIVE) ?
-            \Buckaroo\Magento2\Helper\Data::MODE_LIVE : \Buckaroo\Magento2\Helper\Data::MODE_TEST;
+        $mode = ($active == Data::MODE_LIVE) ?
+            Data::MODE_LIVE : Data::MODE_TEST;
 
         $this->client->setSecretKey(
             $this->encryptor->decrypt(
@@ -192,7 +195,7 @@ class ProcessTransactionOutput implements ResolverInterface
                 __('Unable to get order details')
             );
         }
-        return $this->transactionResponseInterfaceFactory->create(
+        return $this->transactionStatusResponseInterfaceFactory->create(
             ["data" => $data]
         );
     }
