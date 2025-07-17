@@ -17,29 +17,14 @@
  * @copyright Copyright (c) Buckaroo B.V.
  * @license   https://tldrlegal.com/license/mit-license
  */
-
-namespace Buckaroo\Magento2Graphql\Model\Payment\Method\Config;
-
-use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
-
-class Billink extends AbstractConfig
-{
+if (strpos(__DIR__, 'app/code') !== false) {
     /**
-     *
-     * @var \Buckaroo\Magento2\Model\ConfigProvider\Method\Billink
+     * From app/code/Buckaroo/Magento2
      */
-    protected $configProvider;
-
+    require_once(__DIR__ . '/../../../../../dev/tests/unit/framework/bootstrap.php');
+} else {
     /**
-     * @inheritDoc
+     * From vendor/buckaroo/magento2
      */
-    public function getConfig()
-    {
-        return [
-            [
-                "key"=>"b2b",
-                "value" => (int)$this->configProvider->getConfig()['payment']['buckaroo']['billink']['b2b']
-            ],
-        ];
-    }
-}
+    require_once(__DIR__ . '/../../../../../dev/tests/unit/framework/bootstrap.php');
+} 

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         colors="true"
+         cacheDirectory=".phpunit.cache"
+         displayDetailsOnTestsThatTriggerDeprecations="true"
+         displayDetailsOnTestsThatTriggerErrors="true"
+         displayDetailsOnTestsThatTriggerNotices="true"
+         displayDetailsOnTestsThatTriggerWarnings="true"
+         >
+    <testsuites>
+        <testsuite name="buckaroo_graphql_integration">
+            <directory suffix="Test.php">./Test/Integration</directory>
+        </testsuite>
+    </testsuites>
+
+    <php>
+        <ini name="date.timezone" value="Europe/Amsterdam"/>
+        <ini name="memory_limit" value="1G"/>
+        <ini name="xdebug.max_nesting_level" value="200"/>
+        <ini name="error_reporting" value="E_ALL"/>
+        <ini name="display_errors" value="1"/>
+        <ini name="display_startup_errors" value="1"/>
+    </php>
+
+    <coverage>
+        <include>
+            <directory suffix=".php">./Model</directory>
+            <directory suffix=".php">./Plugin</directory>
+            <directory suffix=".php">./Resolver</directory>
+        </include>
+        <exclude>
+            <directory suffix=".php">./Test</directory>
+            <file>registration.php</file>
+        </exclude>
+    </coverage>
+
+    <!-- Logging for better debugging -->
+    <logging>
+        <testdoxText outputFile="test-results.txt"/>
+    </logging>
+</phpunit> 

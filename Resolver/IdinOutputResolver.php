@@ -21,6 +21,8 @@
 
 namespace Buckaroo\Magento2Graphql\Resolver;
 
+use Buckaroo\Magento2\Exception;
+use Buckaroo\Magento2\Gateway\Http\TransactionBuilder\IdinBuilderInterface;
 use Buckaroo\Magento2\Logging\Log;
 use Buckaroo\Magento2\Gateway\GatewayInterface;
 use Magento\Framework\GraphQl\Config\Element\Field;
@@ -32,12 +34,12 @@ use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 class IdinOutputResolver implements ResolverInterface
 {
     /**
-     * @var Buckaroo\Magento2\Gateway\Http\TransactionBuilder\IdinBuilderInterface
+     * @var IdinBuilderInterface
      */
     protected $transactionBuilder;
 
     /**
-     * @var \Buckaroo\Magento2\Gateway\GatewayInterface
+     * @var GatewayInterface
      */
     protected $gateway;
 
@@ -48,9 +50,10 @@ class IdinOutputResolver implements ResolverInterface
 
     /**
      *
-     * @param \Buckaroo\Magento2\Gateway\Http\TransactionBuilderFactory $transactionBuilderFactory
-     * @param \Buckaroo\Magento2\Gateway\GatewayInterface $gateway
+     * @param TransactionBuilderFactory $transactionBuilderFactory
+     * @param GatewayInterface $gateway
      * @param Log $logger
+     * @throws Exception
      */
     public function __construct(
         TransactionBuilderFactory $transactionBuilderFactory,
@@ -86,8 +89,9 @@ class IdinOutputResolver implements ResolverInterface
             );
         }
     }
+
     /**
-     * Send idin request
+     * Send iDIN request
      *
      * @param string $issuer
      *

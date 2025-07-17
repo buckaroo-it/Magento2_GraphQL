@@ -11,6 +11,7 @@ This plugin is needed for our [Hÿva React checkout extension](https://github.co
 ### Index
 - [Installation](#installation)
 - [Requirements](#requirements)
+- [Usage](#usage)
 - [Additional information](#additional-information)
 - [Contribute](#contribute)
 - [Versioning](#versioning)
@@ -20,8 +21,7 @@ This plugin is needed for our [Hÿva React checkout extension](https://github.co
 
 ### Requirements
 To use the plugin you must use: 
-- Magento Open Source version 2.4.x
-- Buckaroo Magento 2 Payment module 1.43.0 or higher.
+- Buckaroo Magento 2 Payment module 1.52.1 or higher.
 
 ## Installation
   - Install the module composer by running the following command: `composer require buckaroo/magento2graphql`
@@ -59,7 +59,7 @@ query {
   - Set the return url using our custom migration `setBuckarooReturnUrl` required in order for the payment engine to redirect back to your application after the payment was completed/canceled/failed
   - Finally execute the the default `placeOrder` that will return a redirect url for the payment engine to complete the payment
 
-For iDEAL we have the following example:
+For iDEAL we have the following example (Note: iDEAL no longer requires issuer selection - bank selection happens on the redirect page):
 ```graphql
   mutation doBuckarooPayment(
   $cartId: String!
@@ -71,7 +71,7 @@ For iDEAL we have the following example:
       cart_id: $cartId
       payment_method: {
         code: $methodCode
-        buckaroo_additional: { buckaroo_magento2_ideal: { issuer: "ABNANL2A" } }
+        buckaroo_additional: { buckaroo_magento2_ideal: {} }
       }
     }
   ) {
@@ -107,63 +107,64 @@ After this migration is performed you will need to store the buckaroo `transacti
 
 ### Retrieve the payment status
 
-In order to get the payment status after the user is redirected back we will use our custom migration `buckarooPaymentTransactionStatus` that will need the stored `transaction_id`
+### Retrieve Payment Status
 
+After the user completes payment and is redirected back, use the `buckarooPaymentTransactionStatus` query with the stored `transaction_id`:
+
+**Option 1: Inline syntax (simple)**
 ```graphql
-mutation buckarooPaymentTransactionStatus(input: { transaction_id: "E397CF4C24E64AA299F45246F9906F45" }) {
-  payment_status,
-  status_code
+mutation {
+  buckarooPaymentTransactionStatus(input: { transaction_id: "E397CF4C24E64AA299F45246F9906F45" }) {
+    payment_status
+    status_code
+  }
 }
 ```
 
-- Get the available payments methods with additional data for gateways:
+**Option 2: With variables (recommended for dynamic values)**
 ```graphql
-query {
-    cart(cart_id: "{ CART_ID }") {
-        available_payment_methods {
-            code
-            title
-            buckaroo_additional {
-                key
-                values {
-                    name
-                    code
-                    img
-                }
-                value
-            }
-        }
-    }
+mutation checkPaymentStatus($input: BuckarooPaymentTransactionStatusInput!) {
+  buckarooPaymentTransactionStatus(input: $input) {
+    payment_status
+    status_code
+  }
 }
 ```
 
-- Place order request example: In order to place a order you will need to the following 3 steps:
-  - Set the payment method on the card with the required additional parameters using the default `setPaymentMethodOnCart` and the `buckaroo_additional` property
-  - Set the return url using our custom migration `setBuckarooReturnUrl` required in order for the payment engine to redirect back to your application after the payment was completed/canceled/failed
-  - Finally execute the the default `placeOrder` that will return a redirect url for the payment engine to complete the payment
+Variables:
+```json
+{
+  "input": {
+    "transaction_id": "E397CF4C24E64AA299F45246F9906F45"
+  }
+}
+```
 
-For iDEAL we have the following example:
+
+### SEPA Direct Debit Example
+
+For SEPA Direct Debit payments, use the following format:
+
 ```graphql
-  mutation doBuckarooPayment(
-  $cartId: String!
-  $returnUrl: String!
-  $methodCode: String!
-) {
+mutation doSepaPayment($cartId: String!, $returnUrl: String!) {
   setPaymentMethodOnCart(
     input: {
       cart_id: $cartId
       payment_method: {
-        code: $methodCode
-        buckaroo_additional: { buckaroo_magento2_ideal: { issuer: "ABNANL2A" } }
+        code: "buckaroo_magento2_sepadirectdebit"
+        buckaroo_additional: { 
+          buckaroo_magento2_sepadirectdebit: { 
+            customer_iban: "NL13TEST0123456789"
+            customer_bic: "TESTNL2A"
+            customer_account_name: "Test Account Holder"
+          } 
+        }
       }
     }
   ) {
     cart {
-      items {
-        product {
-          name
-          sku
-        }
+      selected_payment_method {
+        code
       }
     }
   }
@@ -174,28 +175,13 @@ For iDEAL we have the following example:
     order {
       order_number
       buckaroo_additional {
-        redirect
         transaction_id
-        data {
-          key
-          value
-        }
       }
     }
   }
 }
-
 ```
-After this migration is performed you will need to store the buckaroo `transaction_id` and redirect the user to complete the payment
 
-In order to get the payment status after the user is redirected back we will use our custom migration `buckarooPaymentTransactionStatus` that will need the stored `transaction_id`
-
-```graphql
-mutation buckarooPaymentTransactionStatus(input: { transaction_id: "E397CF4C24E64AA299F45246F9906F45" }) {
-  payment_status,
-  status_code
-}
-```
 ### Additional information
 - **Support:** https://support.buckaroo.eu/contact
 - **Contact:** [support@buckaroo.nl](mailto:support@buckaroo.nl) or [+31 (0)30 711 50 50](tel:+310307115050)
