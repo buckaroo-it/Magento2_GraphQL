@@ -23,26 +23,13 @@ namespace Buckaroo\Magento2Graphql\Model\Payment\Method\Config;
 
 use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
 
-class IdealProcessing extends AbstractConfig
+class IdealProcessing extends Ideal
 {
     /**
      * @inheritDoc
      */
     public function getConfig()
     {
-        return [
-            [
-                "key" => "selectionType",
-                "value" => $this->getConfigValue('selectionType')
-            ],
-            [
-                "key" => "banks",
-                "values" => $this->getConfigValue('banks')
-            ]
-        ];
-    }
-    protected function getConfigValue($key)
-    {
-        return $this->configProvider->getConfig()['payment']['buckaroo']['idealprocessing'][$key];
+        return [];
     }
 }

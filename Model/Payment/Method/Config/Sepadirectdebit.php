@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  *
@@ -22,11 +23,11 @@ namespace Buckaroo\Magento2Graphql\Model\Payment\Method\Config;
 
 use Buckaroo\Magento2Graphql\Model\Payment\Method\AbstractConfig;
 
-class Billink extends AbstractConfig
+class Sepadirectdebit extends AbstractConfig
 {
     /**
      *
-     * @var \Buckaroo\Magento2\Model\ConfigProvider\Method\Billink
+     * @var \Buckaroo\Magento2\Model\ConfigProvider\Method\Sepadirectdebit
      */
     protected $configProvider;
 
@@ -37,9 +38,22 @@ class Billink extends AbstractConfig
     {
         return [
             [
-                "key"=>"b2b",
-                "value" => (int)$this->configProvider->getConfig()['payment']['buckaroo']['billink']['b2b']
+                "key" => "customer_iban",
+                "required" => true
             ],
+            [
+                "key" => "customer_bic",
+                "required" => false
+            ],
+            [
+                "key" => "customer_account_name",
+                "required" => true
+            ]
         ];
+    }
+
+    protected function getConfigValue($key)
+    {
+        return $this->configProvider->getConfig()['payment']['buckaroo']['sepadirectdebit'][$key] ?? null;
     }
 }

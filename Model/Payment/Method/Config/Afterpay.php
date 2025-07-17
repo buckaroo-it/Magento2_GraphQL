@@ -26,7 +26,7 @@ class Afterpay extends AbstractConfig
 {
     /**
      *
-     * @var Buckaroo\Magento2\Model\ConfigProvider\Method\Afterpay
+     * @var \Buckaroo\Magento2\Model\ConfigProvider\Method\Afterpay
      */
     protected $configProvider;
     /**
