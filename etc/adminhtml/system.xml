@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the MIT License
+ * It is available through the world-wide-web at this URL:
+ * https://tldrlegal.com/license/mit-license
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to support@buckaroo.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact support@buckaroo.nl for more information.
+ *
+ * @copyright Copyright (c) Buckaroo B.V.
+ * @license   https://tldrlegal.com/license/mit-license
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="buckaroo_magento2" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="graphql_configuration" translate="label" type="text" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>GraphQL Configuration</label>
+                <comment>Configuration specific to GraphQL/headless implementations. These settings only affect payment requests made through GraphQL.</comment>
+                <fieldset_css>buckaroo_magento2-section</fieldset_css>
+
+                <field id="override_enabled" translate="label comment tooltip" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable GraphQL Push URL Override</label>
+                    <comment>Enable to use a fixed push URL for all GraphQL payment requests instead of dynamic domain-based URLs.</comment>
+                    <tooltip>When disabled, GraphQL requests will use the same push URL logic as standard checkout (dynamic). When enabled, you must provide a static push URL.</tooltip>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <config_path>buckaroo_magento2_graphql/configuration/override_enabled</config_path>
+                </field>
+
+                <field id="static_push_url" translate="label comment tooltip" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Static Push URL</label>
+                    <comment>Enter the fixed push URL to use for all GraphQL payment requests (e.g., https://api.example.com/buckaroo/push).</comment>
+                    <tooltip>This URL will be used instead of the dynamic domain-based URL for GraphQL requests only.</tooltip>
+                    <config_path>buckaroo_magento2_graphql/configuration/static_push_url</config_path>
+                    <validate>required-entry validate-url</validate>
+                    <depends>
+                        <field id="override_enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

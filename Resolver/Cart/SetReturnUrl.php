@@ -27,6 +27,7 @@ use Magento\QuoteGraphQl\Model\Cart\GetCartForUser;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Buckaroo\Magento2Graphql\Resolver\AbstractCartResolver;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
+use Buckaroo\Magento2Graphql\Helper\GraphqlDetector;
 
 class SetReturnUrl extends AbstractCartResolver
 {
@@ -42,17 +43,25 @@ class SetReturnUrl extends AbstractCartResolver
      */
     private $logger;
 
+    /**
+     * @var GraphqlDetector
+     */
+    private $graphqlDetector;
+
     public function __construct(
         GetCartForUser $getCartForUser,
-        Log $logger
+        Log $logger,
+        GraphqlDetector $graphqlDetector
     ) {
         parent::__construct($getCartForUser);
         $this->logger = $logger;
+        $this->graphqlDetector = $graphqlDetector;
     }
 
     public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
-
+        // Mark this as a GraphQL context for push URL detection
+        $this->graphqlDetector->markAsGraphqlContext();
 
         parent::resolve($field, $context, $info, $value, $args);
 
