@@ -71,4 +71,7 @@
     <type name="Buckaroo\Magento2\Gateway\Http\TransactionBuilder\Order">
         <plugin name="buckaroo_graphql_push_url_modifier" type="Buckaroo\Magento2Graphql\Plugin\TransactionBuilder\PushUrlModifier" />
     </type>
+    <type name="Buckaroo\Magento2\Model\Transaction\Status\ProcessResponse">
+        <plugin name="buckaroo_graphql_group_transaction" type="Buckaroo\Magento2Graphql\Plugin\Transaction\ProcessResponsePlugin" />
+    </type>
 </config>
