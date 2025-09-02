@@ -21,7 +21,7 @@
 
 namespace Buckaroo\Magento2Graphql\Model\Payment\Method;
 
-use Buckaroo\Magento2\Model\ConfigProvider\Factory;
+ use Buckaroo\Magento2\Model\ConfigProvider\Method\Factory;
 
 class ConfigFactory
 {
@@ -61,5 +61,7 @@ class ConfigFactory
                 throw new ConfigFactoryException($th->getMessage(), 0, $th);
             }
         }
+        
+        return null;
     }
 }
