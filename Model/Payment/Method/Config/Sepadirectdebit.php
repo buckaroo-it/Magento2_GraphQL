@@ -27,7 +27,7 @@ class Sepadirectdebit extends AbstractConfig
 {
     /**
      *
-     * @var \Buckaroo\Magento2\Model\ConfigProvider\Method\Sepadirectdebit
+     * @var \Buckaroo\Magento2\Model\ConfigProvider\Method\SepaDirectDebit
      */
     protected $configProvider;
 
