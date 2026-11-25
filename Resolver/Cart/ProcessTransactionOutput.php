@@ -50,7 +50,6 @@ class ProcessTransactionOutput implements ResolverInterface
      */
     private $logger;
 
-
     /**
      * @var \Buckaroo\Magento2\Model\Transaction\Status\ProcessResponse
      */
@@ -81,6 +80,15 @@ class ProcessTransactionOutput implements ResolverInterface
      */
     protected $encryptor;
 
+    /**
+     * @param ProcessResponse $processResponse
+     * @param TransactionStatusResponseInterfaceFactory $transactionResponseInterfaceFactory
+     * @param Json $client
+     * @param Log $logger
+     * @param Account $accountConfig
+     * @param TransactionCollection $transactionCollection
+     * @param Encryptor $encryptor
+     */
     public function __construct(
         ProcessResponse $processResponse,
         TransactionStatusResponseInterfaceFactory $transactionResponseInterfaceFactory,
@@ -98,6 +106,10 @@ class ProcessTransactionOutput implements ResolverInterface
         $this->transactionCollection = $transactionCollection;
         $this->encryptor = $encryptor;
     }
+
+    /**
+     * @inheritdoc
+     */
     public function resolve(
         Field $field,
         $context,
@@ -143,7 +155,6 @@ class ProcessTransactionOutput implements ResolverInterface
             );
         }
     }
-
 
     /**
      * Get order by transaction id
