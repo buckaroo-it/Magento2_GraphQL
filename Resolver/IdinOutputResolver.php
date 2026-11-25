@@ -65,7 +65,7 @@ class IdinOutputResolver implements ResolverInterface
         $this->logger             = $logger;
     }
 
-    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
+    public function resolve(Field $field, $context, ResolveInfo $info, ?array $value = null, ?array $args = null)
     {
         if (!(isset($args['input']) && isset($args['input']['issuer']))) {
             throw new GraphQlInputException(

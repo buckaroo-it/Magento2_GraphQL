@@ -27,7 +27,7 @@ class AdditionalData implements ResolverInterface
         $this->fieldListFactory = $fieldListFactory;
     }
 
-    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
+    public function resolve(Field $field, $context, ResolveInfo $info, ?array $value = null, ?array $args = null)
     {
 
         $configClass = $this->getConfigClass($value['code']);
