@@ -37,7 +37,7 @@ It is also a prerequisite for the [Hyvä React Checkout module](https://github.c
 
 | Requirement | Supported versions |
 |---|---|
-| [Buckaroo Magento 2 plugin](https://github.com/buckaroo-it/Magento2) | 1.52.1 or higher |
+| [Buckaroo Magento 2 plugin](https://github.com/buckaroo-it/Magento2) | 2.7 or higher (use module 1.1.x with plugin 1.x) |
 
 Magento, PHP and Composer requirements come from the [main plugin](https://github.com/buckaroo-it/Magento2). You also need a Buckaroo account — don't have one yet? [Request an account](https://www.buckaroo.nl/start).
 
