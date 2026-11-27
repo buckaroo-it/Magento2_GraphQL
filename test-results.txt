@@ -1,0 +1,20 @@
+Additional Data Provider (Buckaroo\Magento2Graphql\Test\Unit\Model\AdditionalDataProvider)
+ [x] Uses the field named after the method code
+ [x] Method without fields only gets the origin
+
+Method Config (Buckaroo\Magento2Graphql\Test\Unit\Model\Payment\MethodConfig)
+ [x] Flattens the plugin checkout config of the method
+ [x] Returns nothing for other or unknown methods
+
+Order Output (Buckaroo\Magento2Graphql\Test\Unit\Resolver\Cart\OrderOutput)
+ [x] Answers for the order placed in this request
+ [x] Returns null for another order
+ [x] Returns null without response
+ [x] Matches a response without invoice by the transaction key on the payment
+
+Process Response Plugin (Buckaroo\Magento2Graphql\Test\Unit\Plugin\Transaction\ProcessResponsePlugin)
+ [x] Plugin class exists
+ [x] After process method exists
+ [x] Valid transaction data validation
+ [x] Group transaction detection
+

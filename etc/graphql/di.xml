@@ -23,7 +23,44 @@
     <type name="Magento\QuoteGraphQl\Model\Cart\Payment\AdditionalDataProviderPool">
         <arguments>
             <argument name="dataProviders" xsi:type="array">
-                <item name="buckaroo_additional" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_afterpay" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_afterpay2" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_afterpay20" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_alipay" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_applepay" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_belfius" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_billink" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_bizum" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_blik" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_capayablein3" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_clicktopay" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_creditcard" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_creditcards" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_eps" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_giftcards" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_googlepay" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_ideal" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_kbc" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_klarna" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_klarnakp" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_mbway" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_mrcash" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_multibanco" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_p24" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_paybybank" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_paylink" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_paypal" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_payperemail" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_pospayment" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_sepadirectdebit" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_swish" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_transfer" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_trustly" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_twint" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_voucher" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_wechatpay" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_wero" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
+                <item name="buckaroo_magento2_zakelijkoprekening" xsi:type="object">Buckaroo\Magento2Graphql\Model\AdditionalDataProvider</item>
             </argument>
         </arguments>
     </type>

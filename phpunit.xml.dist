@@ -9,6 +9,9 @@
          displayDetailsOnTestsThatTriggerWarnings="true"
          >
     <testsuites>
+        <testsuite name="buckaroo_graphql_unit">
+            <directory suffix="Test.php">./Test/Unit</directory>
+        </testsuite>
         <testsuite name="buckaroo_graphql_integration">
             <directory suffix="Test.php">./Test/Integration</directory>
         </testsuite>
