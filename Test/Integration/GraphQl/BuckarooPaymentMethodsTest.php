@@ -99,177 +99,57 @@ class BuckarooPaymentMethodsTest extends GraphQLTestCase
     public function paymentMethodsDataProvider(): array
     {
         return [
-            // iDEAL
-            [
-                'buckaroo_magento2_ideal',
-                [],
-                'iDEAL'
-            ],
-
-            // Credit Cards
-            [
-                'buckaroo_magento2_creditcard',
-                ['card_type' => 'visa'],
-                'Credit Card (redirect)'
-            ],
-
-            // PayPal
-            [
-                'buckaroo_magento2_paypal',
-                [],
-                'PayPal'
-            ],
-
-            // Afterpay / Buy Now Pay Later
+            ['buckaroo_magento2_ideal', [], 'iDEAL | Wero'],
+            ['buckaroo_magento2_creditcard', ['card_type' => 'visa'], 'Credit Card (redirect)'],
+            ['buckaroo_magento2_paypal', [], 'PayPal'],
             [
                 'buckaroo_magento2_afterpay',
                 [
+                    'termsCondition' => '1',
                     'customer_DoB' => '29/04/1997',
-                    'customer_billingName' => 'John Doe',
-                    'customer_iban' => 'NL91ABNA0417164300',
-                    'selectedBusiness' => '1', // 1 = B2C, 2 = B2B
-                    'termsCondition' => true
+                    'customer_gender' => '1',
                 ],
-                'Afterpay Accept Giro'
+                'Riverty | Afterpay (legacy)'
             ],
             [
                 'buckaroo_magento2_afterpay2',
                 [
+                    'termsCondition' => '1',
                     'customer_DoB' => '29/04/1997',
-                    'customer_billingName' => 'John Doe',
-                    'customer_iban' => 'NL91ABNA0417164300',
-                    'selectedBusiness' => '1', // 1 = B2C, 2 = B2B
-                    'termsCondition' => true
+                    'customer_gender' => '1',
                 ],
-                'Afterpay 2'
+                'Riverty | Afterpay (legacy, second account)'
             ],
-            [
-                'buckaroo_magento2_afterpay20',
-                [
-                    'customer_telephone' => null,
-                    'customer_identificationNumber' => null,
-                    'customer_DoB' => '29/04/1997',
-                    'customer_billingName' => 'John Doe',
-                    'termsCondition' => true,
-                    'customer_coc' => ''
-                ],
-                'Afterpay 20'
-            ],
-
-            // Bancontact (Belgian payment method)
-            [
-                'buckaroo_magento2_mrcash',
-                [],
-                'Bancontact'
-            ],
-
-            // EPS (Austrian payment method)
-            [
-                'buckaroo_magento2_eps',
-                [],
-                'EPS (Austria)'
-            ],
-
-            // Przelewy24 (Polish payment method)
-            [
-                'buckaroo_magento2_p24',
-                ['customer_email' => 'test@example.com'],
-                'Przelewy24'
-            ],
-
-            // PayByBank
-            [
-                'buckaroo_magento2_paybybank',
-                ['issuer' => 'ABNANL2A'],
-                'Pay by Bank'
-            ],
-
-            // Apple Pay
-            [
-                'buckaroo_magento2_applepay',
-                [],
-                'Apple Pay'
-            ],
-
-            // Klarna Pay Now
-            [
-                'buckaroo_magento2_klarna',
-                ['customer_gender' => '1'], // 1 = male, 2 = female
-                'Klarna Pay Now'
-            ],
-            [
-                'buckaroo_magento2_klarnakp',
-                ['customer_gender' => '2'], // 1 = male, 2 = female
-                'Klarna Pay Later'
-            ],
-
-            // SEPA Direct Debit
+            ['buckaroo_magento2_afterpay20', ['customer_DoB' => '29/04/1997'], 'Riverty'],
+            ['buckaroo_magento2_mrcash', [], 'Bancontact'],
+            ['buckaroo_magento2_eps', [], 'EPS'],
+            ['buckaroo_magento2_p24', [], 'Przelewy24'],
+            ['buckaroo_magento2_paybybank', [], 'PayByBank'],
+            ['buckaroo_magento2_klarna', [], 'Klarna'],
+            ['buckaroo_magento2_klarnakp', [], 'Klarna (authorize)'],
             [
                 'buckaroo_magento2_sepadirectdebit',
                 [
-                    'customer_bic' => '',
                     'customer_iban' => 'NL13TEST0123456789',
                     'customer_account_name' => 'Test User'
                 ],
                 'SEPA Direct Debit'
             ],
-
-            // Gift Cards
-            [
-                'buckaroo_magento2_giftcards',
-                ['giftcard_method' => 'fashioncheque'],
-                'Fashion Cheque Gift Card'
-            ],
-
-            // iDEAL Processing (QR Code)
-            [
-                'buckaroo_magento2_idealprocessing',
-                [],
-                'iDEAL Processing QR'
-            ],
-
-            // Billink
+            ['buckaroo_magento2_giftcards', ['giftcard_method' => 'fashioncheque'], 'Giftcards (redirect)'],
             [
                 'buckaroo_magento2_billink',
                 [
-                    'customer_billingName' => 'John Doe',
-                    'customer_gender' => '1', // 1 = male, 2 = female
-                    'customer_DoB' => '29/04/1997',
-                    'termsCondition' => true
+                    'customer_gender' => '1',
+                    'customer_DoB' => '29/04/1997'
                 ],
-                'Billink Buy Now Pay Later'
+                'Billink'
             ],
-
-            // In3 (formerly Capayable)
-            [
-                'buckaroo_magento2_capayablein3',
-                [
-                    'customer_billingName' => 'John Doe',
-                    'customer_DoB' => '01/01/1990'
-                ],
-                'in3 Buy Now Pay Later'
-            ],
-
-            // PayConiq
-            [
-                'buckaroo_magento2_payconiq',
-                [],
-                'PayConiq'
-            ],
-
-            // Trustly
-            [
-                'buckaroo_magento2_trustly',
-                [],
-                'Trustly'
-            ],
-
-            // Wechatpay
-            [
-                'buckaroo_magento2_wechatpay',
-                [],
-                'Wechatpay'
-            ],
+            ['buckaroo_magento2_capayablein3', ['customer_DoB' => '01/01/1990'], 'In3'],
+            ['buckaroo_magento2_trustly', [], 'Trustly'],
+            ['buckaroo_magento2_wechatpay', [], 'WeChat Pay'],
+            ['buckaroo_magento2_alipay', [], 'Alipay'],
+            ['buckaroo_magento2_wero', [], 'Wero'],
+            ['buckaroo_magento2_bizum', [], 'Bizum'],
         ];
     }
 }

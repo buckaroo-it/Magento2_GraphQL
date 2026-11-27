@@ -60,6 +60,9 @@ abstract class GraphQLTestCase extends TestCase
         $this->logEntries = [];
         $this->log("🚀 Starting test setup", 'INFO');
 
+        // The endpoint can be overridden, e.g. BUCKAROO_GRAPHQL_URL=https://magento.test:9443/graphql
+        $this->graphqlUrl = getenv('BUCKAROO_GRAPHQL_URL') ?: $this->graphqlUrl;
+
         // Try to find a working GraphQL endpoint
         $this->detectWorkingApiEndpoint();
     }
@@ -103,7 +106,7 @@ abstract class GraphQLTestCase extends TestCase
                 CURLOPT_FOLLOWLOCATION => true,
             ]);
 
-            $response = curl_exec($ch);
+            curl_exec($ch);
             $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             $error = curl_error($ch);
             curl_close($ch);
@@ -709,11 +712,9 @@ abstract class GraphQLTestCase extends TestCase
             'code' => $paymentCode
         ];
 
-        // Add buckaroo_additional data if provided
+        // Method fields go in the PaymentMethodInput field named after the method code
         if (!empty($paymentData)) {
-            $paymentMethodInput['buckaroo_additional'] = [
-                $paymentCode => $paymentData
-            ];
+            $paymentMethodInput[$paymentCode] = $paymentData;
         }
 
         return $this->graphQlMutation($mutation, [
@@ -730,8 +731,19 @@ abstract class GraphQLTestCase extends TestCase
         $mutation = '
             mutation placeOrder($cart_id: String!) {
                 placeOrder(input: { cart_id: $cart_id }) {
+                    errors {
+                        code
+                        message
+                    }
                     order {
                         order_number
+                        buckaroo_additional {
+                            redirect
+                            transaction_id
+                        }
+                    }
+                    orderV2 {
+                        number
                         buckaroo_additional {
                             redirect
                             transaction_id

@@ -75,7 +75,7 @@ Payment methods are enabled and configured in the main plugin, under **Stores â†
 
 ### Listing the available payment methods
 
-Each method comes back with its Buckaroo-specific extra data under `buckaroo_additional`:
+Each Buckaroo method comes back with its checkout configuration under `buckaroo_additional` (the same values the Magento checkout uses: title, logo, test mode, and per method for example the card list, giftcards or the Apple Pay button settings). Lists of options such as cards come back in `values`:
 
 ```graphql
 query {
@@ -99,9 +99,12 @@ query {
 
 ### Placing an order
 
+> [!IMPORTANT]
+> **Upgrading from 1.1.x:** method fields moved from `payment_method.buckaroo_additional.<method code>` to `payment_method.<method code>`, fields that plugin 2.x does not use were removed, and the retired methods Emandate, iDEAL Processing, Klarna (klarnain), Knaken and Payconiq are gone.
+
 Placing an order takes three steps, which can be combined into one mutation:
 
-1. Set the payment method on the cart with the standard `setPaymentMethodOnCart`, passing any method-specific fields under `buckaroo_additional`.
+1. Set the payment method on the cart with the standard `setPaymentMethodOnCart`. Methods that need extra fields take them in the `PaymentMethodInput` field named after the method code, for example `buckaroo_magento2_sepadirectdebit: { ... }`. Methods without extra fields (iDEAL | Wero, PayPal, Bancontact, Klarna, â€¦) only need the `code`.
 2. Set the return URL with `setBuckarooReturnUrl`, so the payment engine knows where to send the customer after the payment completes, is cancelled or fails.
 3. Call the standard `placeOrder`, which returns the redirect URL.
 
@@ -116,7 +119,6 @@ mutation doBuckarooPayment(
       cart_id: $cartId
       payment_method: {
         code: $methodCode
-        buckaroo_additional: { buckaroo_magento2_ideal: {} }
       }
     }
   ) {
@@ -133,8 +135,12 @@ mutation doBuckarooPayment(
     success
   }
   placeOrder(input: { cart_id: $cartId }) {
-    order {
-      order_number
+    errors {
+      code
+      message
+    }
+    orderV2 {
+      number
       buckaroo_additional {
         redirect
         transaction_id
@@ -148,10 +154,12 @@ mutation doBuckarooPayment(
 }
 ```
 
-Store the returned `transaction_id`, then redirect the customer to the `redirect` URL to complete the payment.
+A refused payment comes back in `placeOrder.errors`. Store the returned `transaction_id`, then redirect the customer to the `redirect` URL to complete the payment.
 
 > [!NOTE]
-> iDEAL no longer requires an issuer, so `buckaroo_magento2_ideal` can be left empty. The customer picks their bank on the redirect page.
+> iDEAL no longer requires an issuer: send only the code. The customer picks their bank on the redirect page.
+>
+> `buckaroo_additional` is also available on the deprecated `placeOrder.order`; use `orderV2` for new integrations.
 
 <details>
 <summary>SEPA Direct Debit example</summary>
@@ -165,12 +173,10 @@ mutation doSepaPayment($cartId: String!, $returnUrl: String!) {
       cart_id: $cartId
       payment_method: {
         code: "buckaroo_magento2_sepadirectdebit"
-        buckaroo_additional: {
-          buckaroo_magento2_sepadirectdebit: {
-            customer_iban: "NL13TEST0123456789"
-            customer_bic: "TESTNL2A"
-            customer_account_name: "Test Account Holder"
-          }
+        buckaroo_magento2_sepadirectdebit: {
+          customer_iban: "NL13TEST0123456789"
+          customer_bic: "TESTNL2A"
+          customer_account_name: "Test Account Holder"
         }
       }
     }
@@ -185,8 +191,11 @@ mutation doSepaPayment($cartId: String!, $returnUrl: String!) {
     success
   }
   placeOrder(input: { cart_id: $cartId }) {
-    order {
-      order_number
+    errors {
+      message
+    }
+    orderV2 {
+      number
       buckaroo_additional {
         transaction_id
       }
@@ -237,7 +246,7 @@ Having trouble? Work through this list before reaching out:
 
 1. Confirm the [main plugin](https://github.com/buckaroo-it/Magento2) is installed and active, and that the method works in a standard Magento checkout.
 2. Confirm you are on the [latest release](https://github.com/buckaroo-it/Magento2_GraphQL/releases) of both this module and the main plugin.
-3. Check that the method code and the `buckaroo_additional` key match, for example `buckaroo_magento2_ideal` for code `buckaroo_magento2_ideal`.
+3. Check that the method fields are sent in the `PaymentMethodInput` field named after the method code, for example `buckaroo_magento2_sepadirectdebit: { ... }` for code `buckaroo_magento2_sepadirectdebit`.
 4. Flush the cache after installing or upgrading.
 
 Still stuck? Contact us and include your Magento version, main plugin version, this module's version, the query or mutation you sent and the response you received.

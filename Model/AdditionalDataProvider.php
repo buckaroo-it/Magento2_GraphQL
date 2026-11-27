@@ -19,44 +19,35 @@
  * @license   https://tldrlegal.com/license/mit-license
  */
 
+declare(strict_types=1);
+
 namespace Buckaroo\Magento2Graphql\Model;
 
-use Buckaroo\Magento2Graphql\Plugin\AdditionalDataProviderPool;
-use Buckaroo\Magento2Graphql\Model\Payment\Method\ConfigFactory;
 use Magento\QuoteGraphQl\Model\Cart\Payment\AdditionalDataProviderInterface;
 
+/**
+ * Turns the Buckaroo field of PaymentMethodInput into the payment's additional_data.
+ *
+ * Registered in etc/graphql/di.xml for every Buckaroo method code, the way Magento's own payment
+ * GraphQL modules do it: the field is named after the method code, e.g.
+ * payment_method: { code: "buckaroo_magento2_sepadirectdebit", buckaroo_magento2_sepadirectdebit: { ... } }.
+ * The plugin's DataAssignObserver then stores the fields it knows on the payment.
+ */
 class AdditionalDataProvider implements AdditionalDataProviderInterface
 {
-    const PAYMENT_FROM = 'buckaroo_payment_from';
+    public const PAYMENT_FROM = 'buckaroo_payment_from';
+
     /**
-     *
-     * @var ConfigFactory
+     * @inheritdoc
      */
-    protected $fieldListFactory;
-
-    public function __construct(ConfigFactory $fieldListFactory)
+    public function getData(array $data): array
     {
-        $this->fieldListFactory = $fieldListFactory;
-    }
-    /**
-     * Return Additional Data,
-     * set a flag so we know the payment originated from graphql
-     *
-     * @param array $args
-     * @return array
-     */
-    public function getData(array $args): array
-    {
-        $args[self::PAYMENT_FROM] = 'graphQl';
+        $methodCode = (string)($data['code'] ?? '');
+        $fields = $data[$methodCode] ?? [];
 
-        if (isset($args[AdditionalDataProviderPool::PROVIDER_KEY][$args['code']])) {
+        $additionalData = is_array($fields) ? $fields : [];
+        $additionalData[self::PAYMENT_FROM] = 'graphQl';
 
-            $additionalArgs = $args[AdditionalDataProviderPool::PROVIDER_KEY][$args['code']];
-            unset($args[AdditionalDataProviderPool::PROVIDER_KEY]);
-
-            return array_merge($args, $additionalArgs);
-        }
-
-        return $args;
+        return $additionalData;
     }
 }

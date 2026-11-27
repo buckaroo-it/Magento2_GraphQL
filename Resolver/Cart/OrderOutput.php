@@ -36,11 +36,53 @@ class OrderOutput implements ResolverInterface
     {
         $response = $this->buckarooResponseData->getResponse();
 
+        // The field is also on CustomerOrder (orderV2, customer order history): only answer for the
+        // order whose Buckaroo response belongs to this request.
+        if ($response === null || !$this->isResponseForOrder($response, $value ?? [])) {
+            return null;
+        }
+
         return [
             "redirect" => $this->getRedirect($response),
             "data" => $this->getAdditionalOutputData($response),
             "transaction_id" => $this->getTransactionId($response)
         ];
+    }
+
+    /**
+     * Whether the Buckaroo response belongs to the order being resolved
+     *
+     * @param TransactionResponse $response
+     * @param array $order Order (placeOrder.order) or CustomerOrder (orderV2) value
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
+    private function isResponseForOrder(TransactionResponse $response, array $order): bool
+    {
+        $orderModel = isset($order['model']) && is_object($order['model']) ? $order['model'] : null;
+        $orderNumber = $order['order_number'] ?? $order['number']
+            ?? ($orderModel && method_exists($orderModel, 'getIncrementId') ? $orderModel->getIncrementId() : null);
+
+        $invoice = $response->get('Invoice');
+        if (!empty($invoice)) {
+            return $orderNumber !== null && (string)$invoice === (string)$orderNumber;
+        }
+
+        // Some first responses (e.g. the Klarna reserve) carry no Invoice: match the transaction key
+        // stored on the order's payment instead.
+        if ($orderModel && method_exists($orderModel, 'getPayment') && $orderModel->getPayment()) {
+            $key = (string)$response->get('Key');
+            $payment = $orderModel->getPayment();
+
+            return $key !== '' && in_array($key, [
+                (string)$payment->getAdditionalInformation('buckaroo_original_transaction_key'),
+                (string)$payment->getLastTransId(),
+            ], true);
+        }
+
+        // placeOrder.order (deprecated Order type) only ever resolves the order placed in this request
+        return isset($order['order_number']);
     }
 
     /**
