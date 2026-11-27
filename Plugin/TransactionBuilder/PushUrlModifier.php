@@ -20,12 +20,21 @@
 
 namespace Buckaroo\Magento2Graphql\Plugin\TransactionBuilder;
 
-use Buckaroo\Magento2\Gateway\Http\TransactionBuilder\Order;
+use Buckaroo\Magento2\Gateway\Request\BasicParameter\PushUrlDataBuilder;
+use Buckaroo\Magento2\Service\Store\PushUrlBuilder;
 use Buckaroo\Magento2Graphql\Model\ConfigProvider\Configuration;
 use Buckaroo\Magento2Graphql\Helper\GraphqlDetector;
-use Magento\Framework\UrlInterface;
 use Buckaroo\Magento2\Logging\Log;
+use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 
+/**
+ * Sends the configured static push URL instead of the store's push URL for GraphQL orders.
+ *
+ * Plugin 2.x builds every push URL through PushUrlBuilder::getPushUrl(): the payment requests
+ * (PushUrlDataBuilder) as well as the giftcard, voucher and partial-payment requests. During a
+ * GraphQL request that method is overridden. Requests built later for an order placed through
+ * GraphQL (an admin capture or refund) are recognised from the order in PushUrlDataBuilder.
+ */
 class PushUrlModifier
 {
     /**
@@ -39,11 +48,6 @@ class PushUrlModifier
     protected $graphqlDetector;
 
     /**
-     * @var UrlInterface
-     */
-    protected $urlBuilder;
-
-    /**
      * @var Log
      */
     protected $logger;
@@ -51,77 +55,93 @@ class PushUrlModifier
     /**
      * @param Configuration $graphqlConfig
      * @param GraphqlDetector $graphqlDetector
-     * @param UrlInterface $urlBuilder
      * @param Log $logger
      */
     public function __construct(
         Configuration $graphqlConfig,
         GraphqlDetector $graphqlDetector,
-        UrlInterface $urlBuilder,
         Log $logger
     ) {
         $this->graphqlConfig = $graphqlConfig;
         $this->graphqlDetector = $graphqlDetector;
-        $this->urlBuilder = $urlBuilder;
         $this->logger = $logger;
     }
 
     /**
-     * Modify push URL for GraphQL requests only
+     * Use the static push URL for every push URL built during a GraphQL request
      *
-     * @param Order $subject
-     * @param array $result
-     * @return array
+     * @param PushUrlBuilder $subject
+     * @param string $result
+     * @param mixed $store
+     * @return string
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterGetBody(Order $subject, array $result)
+    public function afterGetPushUrl(PushUrlBuilder $subject, string $result, $store = null): string
     {
         try {
-            // Only modify if this is a GraphQL request
-            if (!$this->graphqlDetector->isGraphqlRequest($subject)) {
+            if (!$this->graphqlDetector->isGraphqlRequest()) {
                 return $result;
             }
 
-            // Only modify if GraphQL override is enabled
-            if (!$this->graphqlConfig->isOverrideEnabled()) {
-                return $result;
-            }
-
-            $this->logger->addDebug(__METHOD__ . '|GraphQL push URL override active');
-
-            // With override enabled, we use static push URL
-            if ($this->graphqlConfig->useStaticPushUrl()) {
-                $result = $this->applyStaticPushUrl($result);
-            } else {
-                $this->logger->addDebug(__METHOD__ . '|Override enabled but no static URL configured, using dynamic');
-            }
-
+            return $this->getStaticPushUrl($store) ?? $result;
         } catch (\Exception $e) {
             $this->logger->addError(__METHOD__ . '|Error: ' . $e->getMessage());
-            // Return original result if any error occurs
         }
 
         return $result;
     }
 
     /**
-     * Apply static push URL to transaction body
+     * Use the static push URL for requests about an order placed through GraphQL
      *
-     * @param array $body
+     * @param PushUrlDataBuilder $subject
+     * @param array $result
+     * @param array $buildSubject
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    protected function applyStaticPushUrl(array $body)
+    public function afterBuild(PushUrlDataBuilder $subject, array $result, array $buildSubject): array
     {
-        $staticUrl = $this->graphqlConfig->getStaticPushUrl();
+        try {
+            $paymentDO = $buildSubject['payment'] ?? null;
+            if (!$paymentDO instanceof PaymentDataObjectInterface) {
+                return $result;
+            }
 
-        if ($staticUrl) {
-            $body['PushURL'] = $staticUrl;
-            $this->logger->addDebug(__METHOD__ . '|Applied static push URL: ' . $staticUrl);
-        } else {
-            $this->logger->addDebug(__METHOD__ . '|Static push URL not configured, keeping dynamic');
+            $order = $paymentDO->getPayment()->getOrder();
+            if (!$this->graphqlDetector->isGraphqlRequest($order)) {
+                return $result;
+            }
+
+            $staticUrl = $this->getStaticPushUrl($order->getStoreId());
+            if ($staticUrl !== null) {
+                $result['pushURL'] = $staticUrl;
+                $result['pushURLFailure'] = $staticUrl;
+            }
+        } catch (\Exception $e) {
+            $this->logger->addError(__METHOD__ . '|Error: ' . $e->getMessage());
         }
 
-        return $body;
+        return $result;
     }
 
+    /**
+     * The static push URL when the override is enabled and a URL is set for the store
+     *
+     * @param mixed $store
+     * @return string|null
+     */
+    private function getStaticPushUrl($store): ?string
+    {
+        if (!$this->graphqlConfig->useStaticPushUrl($store)) {
+            return null;
+        }
 
+        $staticUrl = (string)$this->graphqlConfig->getStaticPushUrl($store);
+        $this->logger->addDebug(__METHOD__ . '|Applied static push URL: ' . $staticUrl);
+
+        return $staticUrl;
+    }
 }

@@ -51,7 +51,7 @@ class GraphqlDetector
     /**
      * Check if the current request is a GraphQL request
      *
-     * @param mixed $transactionBuilder
+     * @param mixed $transactionBuilder Order (plugin 2.x) or transaction builder (1.x)
      * @return bool
      */
     public function isGraphqlRequest($transactionBuilder = null)
@@ -106,10 +106,12 @@ class GraphqlDetector
         }
 
         try {
-            // Check if transaction builder has order with GraphQL return URL
-            if (method_exists($transactionBuilder, 'getOrder')) {
-                $order = $transactionBuilder->getOrder();
-                if ($order && $order->getPayment()) {
+            // Plugin 2.x passes the order itself; 1.x passed a transaction builder holding it
+            $order = $transactionBuilder instanceof \Magento\Sales\Model\Order
+                ? $transactionBuilder
+                : (method_exists($transactionBuilder, 'getOrder') ? $transactionBuilder->getOrder() : null);
+            if ($order) {
+                if ($order->getPayment()) {
                     $additionalInfo = $order->getPayment()->getAdditionalInformation();
 
                     // Check for the GraphQL return URL marker set by SetReturnUrl resolver

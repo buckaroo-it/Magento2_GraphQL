@@ -60,7 +60,10 @@
     <type name="Magento\QuoteGraphQl\Model\Cart\Payment\AdditionalDataProviderPool">
         <plugin name="buckaroo_graphql_data_provider_pool" type="Buckaroo\Magento2Graphql\Plugin\AdditionalDataProviderPool" />
     </type>
-    <type name="Buckaroo\Magento2\Gateway\Http\TransactionBuilder\Order">
+    <type name="Buckaroo\Magento2\Service\Store\PushUrlBuilder">
+        <plugin name="buckaroo_graphql_push_url_modifier" type="Buckaroo\Magento2Graphql\Plugin\TransactionBuilder\PushUrlModifier" />
+    </type>
+    <type name="Buckaroo\Magento2\Gateway\Request\BasicParameter\PushUrlDataBuilder">
         <plugin name="buckaroo_graphql_push_url_modifier" type="Buckaroo\Magento2Graphql\Plugin\TransactionBuilder\PushUrlModifier" />
     </type>
     <type name="Buckaroo\Magento2\Model\Transaction\Status\ProcessResponse">
