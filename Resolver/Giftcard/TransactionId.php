@@ -30,7 +30,7 @@ class TransactionId extends Base implements ResolverInterface
 {
 
 
-    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
+    public function resolve(Field $field, $context, ResolveInfo $info, ?array $value = null, ?array $args = null)
     {
         return $this->getField('transaction_id', $value);
     }

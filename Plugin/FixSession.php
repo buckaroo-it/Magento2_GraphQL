@@ -53,7 +53,7 @@ class FixSession
         PhpCookieManager $subject,
         $name,
         $value,
-        PublicCookieMetadata $metadata = null
+        ?PublicCookieMetadata $metadata = null
     ) {
         if ($metadata && method_exists($metadata, 'getSameSite') && ($name == $this->sessionManager->getName())) {
             if ($metadata->getSameSite() != 'None') {

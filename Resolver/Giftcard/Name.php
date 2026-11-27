@@ -30,7 +30,7 @@ class Name extends Base implements ResolverInterface
 {
 
 
-    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
+    public function resolve(Field $field, $context, ResolveInfo $info, ?array $value = null, ?array $args = null)
     {
         $name = $this->getField('label', $value);
         if ($name === null) {

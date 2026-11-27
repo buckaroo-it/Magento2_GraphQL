@@ -68,7 +68,7 @@ class GiftcardTransactionResolver extends AbstractCartResolver
         $this->giftcardResponse = $giftcardResponse;
     }
 
-    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
+    public function resolve(Field $field, $context, ResolveInfo $info, ?array $value = null, ?array $args = null)
     {
         parent::resolve($field, $context, $info, $value, $args);
 

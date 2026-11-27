@@ -2,107 +2,101 @@
 
 namespace Buckaroo\Magento2Graphql\Resolver\Cart;
 
+use Buckaroo\Magento2\Api\Data\BuckarooResponseDataInterface;
+use Buckaroo\Transaction\Response\TransactionResponse;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use \Magento\Framework\Registry;
 
 /**
- * Order output class
+ * Buckaroo output of placeOrder: redirect url, transaction key and service parameters.
+ *
+ * Plugin 2.x keeps the gateway response of the current request in BuckarooResponseDataInterface
+ * (set by its PaymentDetailsHandler) instead of the "buckaroo_response" registry entry of 1.x.
  */
 class OrderOutput implements ResolverInterface
 {
-    protected Registry $registry;
+    /**
+     * @var BuckarooResponseDataInterface
+     */
+    private BuckarooResponseDataInterface $buckarooResponseData;
 
-    public function __construct(Registry $registry)
+    /**
+     * @param BuckarooResponseDataInterface $buckarooResponseData
+     */
+    public function __construct(BuckarooResponseDataInterface $buckarooResponseData)
     {
-        $this->registry = $registry;
+        $this->buckarooResponseData = $buckarooResponseData;
     }
 
-    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
+    /**
+     * @inheritdoc
+     */
+    public function resolve(Field $field, $context, ResolveInfo $info, ?array $value = null, ?array $args = null)
     {
+        $response = $this->buckarooResponseData->getResponse();
+
         return [
-            "redirect" => $this->getRedirect(),
-            "data" => $this->getAdditionalOutputData(),
-            "transaction_id" => $this->getTransactionId()
+            "redirect" => $this->getRedirect($response),
+            "data" => $this->getAdditionalOutputData($response),
+            "transaction_id" => $this->getTransactionId($response)
         ];
     }
 
     /**
-     * Get it for transaction
+     * Get the transaction key
+     *
+     * @param TransactionResponse|null $response
      *
      * @return string|null
      */
-    protected function getTransactionId()
+    protected function getTransactionId(?TransactionResponse $response): ?string
     {
-        $response = $this->getResponse();
+        $key = $response !== null ? $response->get('Key') : null;
 
-        if (isset($response->Key) && !empty($response->Key)) {
-            return $response->Key;
-        }
+        return !empty($key) ? (string)$key : null;
     }
+
     /**
-     * Get redirect url
+     * Get the redirect url
+     *
+     * @param TransactionResponse|null $response
      *
      * @return string|null
      */
-    protected function getRedirect()
+    protected function getRedirect(?TransactionResponse $response): ?string
     {
-        $response = $this->getResponse();
-        if ($response !== null && !empty($response->RequiredAction->RedirectURL)) {
-            return $response->RequiredAction->RedirectURL;
-        }
+        $requiredAction = $response !== null ? $response->get('RequiredAction') : null;
+
+        return !empty($requiredAction['RedirectURL']) ? (string)$requiredAction['RedirectURL'] : null;
     }
+
     /**
-     * Get additional data from response
+     * Get the service parameters of the response
+     *
+     * @param TransactionResponse|null $response
      *
      * @return array|null
      */
-    protected function getAdditionalOutputData()
+    protected function getAdditionalOutputData(?TransactionResponse $response): ?array
     {
+        $services = $response !== null ? $response->get('Services') : null;
+        $parameters = $services[0]['Parameters'] ?? [];
 
-        $response = $this->getResponse();
-        if (
-            $response !== null &&
-            isset($response->Services) &&
-            isset($response->Services->Service) &&
-            is_array($response->Services->Service->ResponseParameter) &&
-            count($response->Services->Service->ResponseParameter)
-        ) {
-            return $this->formatAdditionalOutput($response->Services->Service->ResponseParameter);
+        if (!is_array($parameters) || !count($parameters)) {
+            return null;
         }
-    }
-    /**
-     * Format data in the graphQl format
-     *
-     * @param array $data
-     *
-     * @return array
-     */
-    private function formatAdditionalOutput($data)
-    {
+
         $additionalData = [];
-        if (count($data)) {
-            foreach ($data as $item) {
-                if (isset($item->Name) && isset($item->_)) {
-                    $additionalData[] = [
-                        "key" => $item->Name,
-                        "value" => $item->_
-                    ];
-                }
+        foreach ($parameters as $parameter) {
+            if (isset($parameter['Name'], $parameter['Value'])) {
+                $additionalData[] = [
+                    "key" => $parameter['Name'],
+                    "value" => $parameter['Value']
+                ];
             }
         }
+
         return $additionalData;
-    }
-    /**
-     * Get payment response
-     *
-     * @return stdClass|null
-     */
-    private function getResponse()
-    {
-        if ($this->registry && $this->registry->registry("buckaroo_response")) {
-            return $this->registry->registry("buckaroo_response")[0];
-        }
     }
 }

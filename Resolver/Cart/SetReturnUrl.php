@@ -58,7 +58,7 @@ class SetReturnUrl extends AbstractCartResolver
         $this->graphqlDetector = $graphqlDetector;
     }
 
-    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
+    public function resolve(Field $field, $context, ResolveInfo $info, ?array $value = null, ?array $args = null)
     {
         // Mark this as a GraphQL context for push URL detection
         $this->graphqlDetector->markAsGraphqlContext();

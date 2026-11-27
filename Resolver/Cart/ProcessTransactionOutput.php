@@ -28,7 +28,11 @@ use Buckaroo\Magento2\Model\ConfigProvider\Account;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use Buckaroo\Magento2\Api\TransactionResponseInterfaceFactory;
+use Buckaroo\Magento2\Api\Data\TransactionStatusResponseInterface;
+use Buckaroo\Magento2\Api\Data\TransactionStatusResponseInterfaceFactory;
+use Buckaroo\Magento2\Helper\Data as BuckarooData;
+use Buckaroo\Magento2\Observer\AddInTestModeMessage;
+use Magento\Sales\Model\Order;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Buckaroo\Magento2\Model\Transaction\Status\ProcessResponse;
 use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
@@ -46,7 +50,6 @@ class ProcessTransactionOutput implements ResolverInterface
      */
     private $logger;
 
-
     /**
      * @var \Buckaroo\Magento2\Model\Transaction\Status\ProcessResponse
      */
@@ -58,7 +61,7 @@ class ProcessTransactionOutput implements ResolverInterface
     protected $client;
 
     /**
-     * @var \Buckaroo\Magento2\Api\TransactionResponseInterfaceFactory
+     * @var TransactionStatusResponseInterfaceFactory
      */
     protected $transactionResponseInterfaceFactory;
 
@@ -77,9 +80,18 @@ class ProcessTransactionOutput implements ResolverInterface
      */
     protected $encryptor;
 
+    /**
+     * @param ProcessResponse $processResponse
+     * @param TransactionStatusResponseInterfaceFactory $transactionResponseInterfaceFactory
+     * @param Json $client
+     * @param Log $logger
+     * @param Account $accountConfig
+     * @param TransactionCollection $transactionCollection
+     * @param Encryptor $encryptor
+     */
     public function __construct(
         ProcessResponse $processResponse,
-        TransactionResponseInterfaceFactory $transactionResponseInterfaceFactory,
+        TransactionStatusResponseInterfaceFactory $transactionResponseInterfaceFactory,
         Json $client,
         Log $logger,
         Account $accountConfig,
@@ -94,12 +106,16 @@ class ProcessTransactionOutput implements ResolverInterface
         $this->transactionCollection = $transactionCollection;
         $this->encryptor = $encryptor;
     }
+
+    /**
+     * @inheritdoc
+     */
     public function resolve(
         Field $field,
         $context,
         ResolveInfo $info,
-        array $value = null,
-        array $args = null
+        ?array $value = null,
+        ?array $args = null
     ) {
         try {
 
@@ -122,6 +138,7 @@ class ProcessTransactionOutput implements ResolverInterface
             return $this->processResponse->process(
                 $this->doRequest(
                     $args['input']['transaction_id'],
+                    $order
                 ),
                 $order
             );
@@ -138,7 +155,6 @@ class ProcessTransactionOutput implements ResolverInterface
             );
         }
     }
-
 
     /**
      * Get order by transaction id
@@ -163,37 +179,59 @@ class ProcessTransactionOutput implements ResolverInterface
     }
 
     /**
-     * Do buckaroo status request for transaction
+     * Do a Buckaroo status request for the transaction, with the keys and mode of the order's store
      *
      * @param string $transaction_id
+     * @param Order  $order
      *
-     * @return \Buckaroo\Magento2\Api\TransactionResponseInterface
+     * @return TransactionStatusResponseInterface
+     * @throws GraphQlNoSuchEntityException
      */
-    protected function doRequest(string $transaction_id)
+    protected function doRequest(string $transaction_id, Order $order): TransactionStatusResponseInterface
     {
-        $active = $this->accountConfig->getActive();
-        $mode = ($active == \Buckaroo\Magento2\Helper\Data::MODE_LIVE) ?
-            \Buckaroo\Magento2\Helper\Data::MODE_LIVE : \Buckaroo\Magento2\Helper\Data::MODE_TEST;
+        $store = $order->getStore();
 
         $this->client->setSecretKey(
             $this->encryptor->decrypt(
-                $this->accountConfig->getSecretKey()
+                (string)$this->accountConfig->getSecretKey($store)
             )
         );
         $this->client->setWebsiteKey(
             $this->encryptor->decrypt(
-                $this->accountConfig->getMerchantKey()
+                (string)$this->accountConfig->getMerchantKey($store)
             )
         );
 
-        $data = $this->client->doStatusRequest($transaction_id, $mode);
-        if ($data === null) {
+        $data = $this->client->doStatusRequest($transaction_id, $this->getMode($order));
+        if (!is_array($data) || empty($data)) {
             throw new GraphQlNoSuchEntityException(
                 __('Unable to get order details')
             );
         }
+
         return $this->transactionResponseInterfaceFactory->create(
             ["data" => $data]
         );
+    }
+
+    /**
+     * The mode the order was paid in; the account mode of its store when the payment did not record it
+     *
+     * @param Order $order
+     *
+     * @return int
+     */
+    private function getMode(Order $order): int
+    {
+        $payment = $order->getPayment();
+        $wasTest = $payment ? $payment->getAdditionalInformation(AddInTestModeMessage::PAYMENT_IN_TEST_MODE) : null;
+
+        if ($wasTest !== null) {
+            return $wasTest ? BuckarooData::MODE_TEST : BuckarooData::MODE_LIVE;
+        }
+
+        return (int)$this->accountConfig->getActive($order->getStore()) === BuckarooData::MODE_LIVE
+            ? BuckarooData::MODE_LIVE
+            : BuckarooData::MODE_TEST;
     }
 }

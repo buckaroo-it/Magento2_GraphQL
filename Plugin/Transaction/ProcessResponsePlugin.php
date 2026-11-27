@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace Buckaroo\Magento2Graphql\Plugin\Transaction;
 
-use Buckaroo\Magento2\Api\TransactionResponseInterface;
+use Buckaroo\Magento2\Api\Data\TransactionStatusResponseInterface;
 use Buckaroo\Magento2\Helper\PaymentGroupTransaction;
 use Buckaroo\Magento2\Logging\Log;
 use Buckaroo\Magento2\Model\Transaction\Status\ProcessResponse;
@@ -62,14 +62,14 @@ class ProcessResponsePlugin
      *
      * @param ProcessResponse $subject
      * @param array|null $result
-     * @param TransactionResponseInterface $response
+     * @param TransactionStatusResponseInterface $response
      * @param Order $order
      * @return array|null
      */
     public function afterProcess(
         ProcessResponse $subject,
         ?array $result,
-        TransactionResponseInterface $response,
+        TransactionStatusResponseInterface $response,
         Order $order
     ): ?array {
         if (!$result) {
@@ -100,10 +100,10 @@ class ProcessResponsePlugin
      * Process group transactions from payment additional information
      *
      * @param Order $order
-     * @param TransactionResponseInterface $response
+     * @param TransactionStatusResponseInterface $response
      * @return void
      */
-    private function processGroupTransactions(Order $order, TransactionResponseInterface $response): void
+    private function processGroupTransactions(Order $order, TransactionStatusResponseInterface $response): void
     {
         $payment = $order->getPayment();
         if (!$payment) {
@@ -152,14 +152,14 @@ class ProcessResponsePlugin
      * @param Order $order
      * @param string $transactionId
      * @param array $transactionData
-     * @param TransactionResponseInterface $response
+     * @param TransactionStatusResponseInterface $response
      * @return void
      */
     private function saveGroupTransaction(
         Order $order,
         string $transactionId,
         array $transactionData,
-        TransactionResponseInterface $response
+        TransactionStatusResponseInterface $response
     ): void {
         $serviceCode = $transactionData[0];
         $amount = (float)$transactionData[1];
